@@ -10,7 +10,7 @@ Unofficial **prototype** .NET Falco plugin SDK, powered by DNNE native exports
   - get_open_params
 
 # Sample DummyPlugin deployment
-#### Plugin.cs
+### Plugin.cs
 ```cs
 using System;
 using System.Collections.Generic;
@@ -45,13 +45,24 @@ namespace Falco.Plugin.Sdk
 }
 ```
 
-#### falco.yml
+### build.sh
+```bash
+dotnet build Falco.Plugin.Sdk.Generators.csproj --configuration Release --runtime linux-x64 --no-self-contained
+dotnet build Falco.Plugin.Sdk.DummyPlugin/Falco.Plugin.Sdk.DummyPlugin.csproj --configuration Release --runtime linux-x64 --no-self-contained
+cp Falco.Plugin.Sdk.DummyPlugin/bin/Release/net6.0/linux-x64/Falco.Plugin.Sdk.dll /usr/share/falco/plugins/dummy_plugin
+cp Falco.Plugin.Sdk.DummyPlugin/bin/Release/net6.0/linux-x64/Falco.Plugin.Sdk.DummyPlugin.dll /usr/share/falco/plugins/dummy_plugin
+cp Falco.Plugin.Sdk.DummyPlugin/bin/Release/net6.0/linux-x64/plugin_native.so /usr/share/falco/plugins/dummy_plugin
+cp Falco.Plugin.Sdk.DummyPlugin/bin/Release/net6.0/linux-x64/Falco.Plugin.Sdk.DummyPlugin.runtimeconfig.json /usr/share/falco/plugins/dummy_plugin
+```
+
+### falco.yml
 ```yaml
 plugins:
   - name: dummy_plugin
     library_path: my_plugin/plugin_native.so
 load_plugins: [dummy_plugin]
 ```
+### Test
 <pre><samp>admin@someplace:~$ <kbd>tree /usr/share/falco</kbd>
 /usr/share/falco/
 └── plugins
