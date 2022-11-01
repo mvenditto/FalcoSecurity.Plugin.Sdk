@@ -1,6 +1,6 @@
 # Falco.Plugin.Sdk
 
-Unofficial Falco plugin SDK for .NET, powered by DNNE native exports
+Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, powered by [DNNE](https://github.com/AaronRobinsonMSFT/DNNE) native exports
 
 > ✨ Early development stage alert 
 
