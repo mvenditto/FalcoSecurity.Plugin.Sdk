@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DebugProfile": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Falco.Plugin.Sdk.DummyPlugin\\Falco.Plugin.Sdk.DummyPlugin.csproj"
+    }
+  }
+}
