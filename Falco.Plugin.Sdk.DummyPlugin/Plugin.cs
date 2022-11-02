@@ -1,14 +1,13 @@
-﻿using Falco.Plugin.Sdk;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Falco.Plugin.Sdk
 {
+    public class Config
+    {
+        [JsonPropertyName("flushRate")]
+        public long FlushRate { get; set; } = 30;
+    }
+
     [FalcoPlugin(
         Id = 42,
         Name = "DummyPlugin",
@@ -16,9 +15,11 @@ namespace Falco.Plugin.Sdk
         Contacts = "mvenditto",
         RequiredApiVersion = "2.0.0",
         Version = "1.0.0")]
-    public class Plugin : IEventSource
+    public class Plugin: ConfigurablePlugin<Config>, IEventSource
     {
         public string EventSourceName => "dummy_source";
+
+        public override PluginSchemaType ConfigSchemaType => PluginSchemaType.Json;
 
         public IList<string> EventSourcesToConsume => new List<string> 
         { 

@@ -8,6 +8,7 @@
 	<DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
 	<DnneNativeBinaryName>plugin_native</DnneNativeBinaryName>
 	<DnneCompilerUserFlags>$(DnneCompilerUserFlags)$(MSBuildThisFileDirectory)override.c</DnneCompilerUserFlags>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DNNE" Version="1.0.32" />

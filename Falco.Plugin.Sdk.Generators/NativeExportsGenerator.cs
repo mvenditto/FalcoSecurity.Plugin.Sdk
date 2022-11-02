@@ -54,19 +54,24 @@ namespace Falco.Plugin.Sdk.Generators
 
             var hasEventSourceCapability = false;
             var hasFieldExtractionCapability = false;
+            var hasConfig = false;
 
-            foreach (var iface in pluginClassSymbol.Interfaces)
+            foreach (var iface in pluginClassSymbol.AllInterfaces)
             {
-                if (iface.Name == "IEventSource")
+                switch (iface.Name)
                 {
-                    hasEventSourceCapability = true;
-                }
-
-                if (iface.Name == "IFieldExtractor")
-                {
-                    hasFieldExtractionCapability = true;
+                    case "IEventSource":
+                        hasEventSourceCapability = true;
+                        break;
+                    case "IFieldExtractor":
+                        hasFieldExtractionCapability = true;
+                        break;
+                    case "IConfigurable":
+                        hasConfig = true;
+                        break;
                 }
             }
+
 
             var className = pluginClassSymbol.Name;
 
@@ -96,8 +101,16 @@ namespace Falco.Plugin.Sdk.Generators
 
             source = source
                 .Replace("CLASSNAME_PLACEHOLDER", className)
+                .Replace("HAS_CONFIG", hasConfig ? "true": "false")
                 .Replace("HAS_EVENT_SOURCE_CAP", hasEventSourceCapability ? "true" : "false")
                 .Replace("HAS_FIELD_EXTRACT_CAP", hasFieldExtractionCapability ? "true" : "false");
+
+            if (hasConfig == false)
+            {
+                source = source
+                    .Replace("// BEGIN_PLUGIN_CONFIG", "/*")
+                    .Replace("// END_PLUGIN_CONFIG", "*/");
+            }
 
             if (hasEventSourceCapability == false)
             {
@@ -113,6 +126,9 @@ namespace Falco.Plugin.Sdk.Generators
                     .Replace("// END_PLUGIN_CAP_FIELD_EXTRACTION", "*/");
             }
 
+            var tmp = Path.GetTempPath();
+            var filePath = Path.Combine(tmp, $"{className}NativeExports.g.cs");
+            File.WriteAllText(filePath, source);
 
             context.AddSource($"{className}NativeExports.g.cs", source);
         }
@@ -164,6 +180,8 @@ namespace NAMESPACE_PLACEHOLDER
 
         private const bool _pluginHasFieldExtractCapability = HAS_FIELD_EXTRACT_CAP;
 
+        private const bool _pluginHasConfig = HAS_CONFIG;
+
         // must be non-null, or some funcs like list_opem_params will early-exit
         private static IntPtr _pluginState = Marshal.AllocHGlobal(1);
 
@@ -177,7 +195,16 @@ namespace NAMESPACE_PLACEHOLDER
             _pluginVersion = Marshal.StringToCoTaskMemUTF8(pluginInfo.Version);
             _pluginContact = Marshal.StringToCoTaskMemUTF8(pluginInfo.Contacts);
             _pluginName = Marshal.StringToCoTaskMemUTF8(pluginInfo.Name);
-            Console.WriteLine($""EVENT_SOURCE_CAP={_pluginHasEventSourceCapability}"");
+            
+            // BEGIN_PLUGIN_CONFIG
+            if (_pluginHasConfig)
+            {
+                if (_plugin.TryGenerateJsonSchema(out var jsonSchema))
+                {
+                    _pluginSchema = Marshal.StringToCoTaskMemUTF8(jsonSchema);
+                }
+            }
+            // END_PLUGIN_CONFIG
 
             if (_pluginHasEventSourceCapability)
             {
@@ -185,7 +212,6 @@ namespace NAMESPACE_PLACEHOLDER
                 _eventSourceName = Marshal.StringToCoTaskMemUTF8(eventSource.EventSourceName);
                 var openParams = eventSource.OpenParameters;
                 var openParamsJson = JsonSerializer.Serialize(openParams);
-                Console.WriteLine($""OPEN_PARAMS='{openParamsJson}'"");
                 _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(openParamsJson);
             }
             else 
@@ -203,7 +229,6 @@ namespace NAMESPACE_PLACEHOLDER
         [UnmanagedCallersOnly(EntryPoint = ""plugin_get_init_schema"", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetInitSchema(IntPtr schemaType)
         {
-
             if (_pluginSchema != IntPtr.Zero)
             {
                 Marshal.WriteInt32(schemaType, (int)PluginSchemaType.Json);
