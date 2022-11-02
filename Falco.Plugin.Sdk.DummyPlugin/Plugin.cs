@@ -35,7 +35,7 @@ namespace Falco.Plugin.Sdk
             new(value: "res1;res2;res3", desc: "Some names", separator: ";"),
         };
 
-        public IList<ExtractionField> ExtractFields => new List<ExtractionField>
+        public IList<ExtractionField> Fields => new List<ExtractionField>
         {
             new(type: "uint64", name: "example.count", display: "Counter value", desc:  "Current value of the internal counter"),
             new(type: "string", name: "example.countstr", display: "Counter string value", desc:  "CurrentString represetation of current value of the internal counter")
