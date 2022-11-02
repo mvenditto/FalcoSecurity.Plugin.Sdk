@@ -4,6 +4,14 @@ namespace Falco.Plugin.Sdk
 {
     public record ExtractionField
     {
+        public ExtractionField(string type, string name, string desc, string display="")
+        {
+            Type = type;
+            Name = name;
+            Description = desc;
+            Display = display;
+        }
+
         [JsonPropertyName("name")]
         public string Name { get; init; }
 

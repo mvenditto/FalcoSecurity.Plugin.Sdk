@@ -170,9 +170,13 @@ namespace NAMESPACE_PLACEHOLDER
 
         private static IntPtr _pluginSchema = IntPtr.Zero;
 
+        private static IntPtr _pluginLastError = IntPtr.Zero;
+
         private static uint _pluginId = 0;
 
         private static IntPtr _openParamsJsonArray;
+
+        private static IntPtr _fieldsJsonArray;
 
         private static CLASSNAME_PLACEHOLDER _plugin = new CLASSNAME_PLACEHOLDER();
 
@@ -208,7 +212,7 @@ namespace NAMESPACE_PLACEHOLDER
 
             if (_pluginHasEventSourceCapability)
             {
-                var eventSource = (Falco.Plugin.Sdk.IEventSource) _plugin;
+                var eventSource = (Falco.Plugin.Sdk.Events.IEventSource) _plugin;
                 _eventSourceName = Marshal.StringToCoTaskMemUTF8(eventSource.EventSourceName);
                 var openParams = eventSource.OpenParameters;
                 var openParamsJson = JsonSerializer.Serialize(openParams);
@@ -218,6 +222,19 @@ namespace NAMESPACE_PLACEHOLDER
             {
                _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(""[]"");
             } 
+
+            if (_pluginHasFieldExtractCapability)
+            {
+               var fieldExtractor = (Falco.Plugin.Sdk.IFieldExtractor) _plugin;
+               var fields = fieldExtractor.ExtractFields;
+               var fieldsJson = JsonSerializer.Serialize(fields);
+                Console.WriteLine(fieldsJson);
+               _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
+            }
+            else 
+            {
+                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(""[]"");
+            }
         }
 
         [UnmanagedCallersOnly(EntryPoint = ""plugin_get_required_api_version"", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -259,7 +276,9 @@ namespace NAMESPACE_PLACEHOLDER
         [UnmanagedCallersOnly(EntryPoint = ""plugin_get_last_error"", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetLastError(PluginStateOpaquePtr pluginState)
         {
-            return Marshal.StringToCoTaskMemAnsi(""Test"");
+            var lastError = _plugin.LastError ?? ""cannot get error message: plugin last error not set."";
+            _pluginLastError = Marshal.StringToCoTaskMemUTF8(lastError);
+            return _pluginLastError;
         }
 
         [UnmanagedCallersOnly(EntryPoint = ""plugin_get_name"", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -305,14 +324,41 @@ namespace NAMESPACE_PLACEHOLDER
         [UnmanagedCallersOnly(EntryPoint = ""plugin_open"", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static EventSourceInstanceOpaquePtr Open(PluginStateOpaquePtr pluginState, IntPtr paramsString, IntPtr returnCode)
         {
-            Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
-            return IntPtr.Zero;
+            try
+            {
+                var openParamsStr = Marshal.PtrToStringUTF8(paramsString);
+                var openParams = JsonSerializer.Deserialize<IList<OpenParam>>(openParamsStr);
+                var instance = _plugin.Open(openParams);
+                var handle = GCHandle.Alloc(instance, GCHandleType.Pinned);
+                Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
+                return GCHandle.ToIntPtr(handle);
+            }
+            catch(Exception ex)
+            {
+                Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Failure);
+                _plugin.LastError = ex.ToString();
+                return IntPtr.Zero;
+            }
         }
 
         [UnmanagedCallersOnly(EntryPoint = ""plugin_close"", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static void Close(PluginStateOpaquePtr pluginState, EventSourceInstanceOpaquePtr instance)
         {
-            Marshal.FreeHGlobal(instance);
+            GCHandle? handle = null;
+            try 
+            {
+                handle = GCHandle.FromIntPtr(instance);
+                var evtSourceInstance = (Falco.Plugin.Sdk.Events.IEventSourceInstance) handle?.Target; 
+                _plugin.Close(evtSourceInstance);
+            }
+            catch (Exception ex)
+            {
+                _plugin.LastError = ex.ToString();
+            }
+            finally 
+            {
+                handle?.Free();
+            }
         }
 
         [UnmanagedCallersOnly(EntryPoint = ""plugin_list_open_params"", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -339,7 +385,30 @@ namespace NAMESPACE_PLACEHOLDER
 
         public static int GetNextEventsBatch(PluginStateOpaquePtr pluginState, EventSourceInstanceOpaquePtr instance, IntPtr numEvents, IntPtr events)
         {
-            return (int)PluginReturnCode.Eof;
+            GCHandle? handle = null;
+            try 
+            {
+                handle = GCHandle.FromIntPtr(instance);
+                var evtSourceInstance = (Falco.Plugin.Sdk.Events.IEventSourceInstance) handle.Value.Target;
+                var n = evtSourceInstance.NextBatch();
+                Marshal.WriteInt32(numEvents, n);
+                Marshal.WriteIntPtr(events, evtSourceInstance.EventPool.UnderlyingArray);
+                return (int) PluginReturnCode.Success;
+            }
+            catch (TimeoutException te) 
+            {
+                _plugin.LastError = te.ToString();
+                return (int) PluginReturnCode.Timeout;
+            }
+            catch (Exception ex)
+            {
+                _plugin.LastError = ex.ToString();
+                return (int) PluginReturnCode.Failure;
+            }
+            finally 
+            {
+                handle?.Free();
+            }
         }
 
         #endregion
@@ -350,8 +419,7 @@ namespace NAMESPACE_PLACEHOLDER
         [UnmanagedCallersOnly(EntryPoint = ""plugin_get_fields"", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetFields()
         {
-            return Marshal.StringToCoTaskMemUTF8(string.Empty);
-           
+            return _fieldsJsonArray;
         }
         // END_PLUGIN_CAP_FIELD_EXTRACTION
 

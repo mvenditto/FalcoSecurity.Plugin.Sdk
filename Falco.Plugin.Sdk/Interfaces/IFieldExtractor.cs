@@ -2,6 +2,7 @@
 {
     public interface IFieldExtractor
     {
-        public IList<ExtractionField> ExtractFields { get; init; }
+        public IList<ExtractionField> ExtractFields { get; }
+
     }
 }
