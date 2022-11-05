@@ -42,7 +42,7 @@ namespace Falco.Plugin.Sdk
 
         public string EventSourceName => _evtSource;
 
-        public IList<string> EventSourcesToConsume => new List<string> 
+        public IList<string> EventSourcesToExtract => new List<string> 
         {
            _evtSource
         };

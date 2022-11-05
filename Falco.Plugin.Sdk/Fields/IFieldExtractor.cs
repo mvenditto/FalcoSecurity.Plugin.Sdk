@@ -6,6 +6,8 @@ namespace Falco.Plugin.Sdk.Fields
     {
         IList<ExtractionField> Fields { get; }
 
+        IList<string> EventSourcesToExtract { get; }
+
         void Extract(IExtractionRequest extraction, IEventReader evt);
     }
 }
