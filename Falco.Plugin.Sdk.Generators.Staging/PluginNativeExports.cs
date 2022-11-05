@@ -93,7 +93,7 @@ namespace Falco.Plugin.Sdk
             {
                var fieldExtractor = (IFieldExtractor) _plugin;
                var fields = fieldExtractor.Fields;
-               _numFields = fields.Count;
+               _numFields = fields.Count();
                var fieldsJson = JsonSerializer.Serialize(fields);
                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
             }

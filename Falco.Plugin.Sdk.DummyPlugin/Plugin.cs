@@ -38,24 +38,23 @@ namespace Falco.Plugin.Sdk.DummyPlugin
         Version = "1.0.0")]
     public class Plugin : PluginBase, IEventSource, IFieldExtractor
     {
-        private const string _evtSource = "dummy_source";
+        public string EventSourceName => "dummy_source";
 
-        public string EventSourceName => _evtSource;
+        public IEnumerable<string> EventSourcesToExtract 
+            => Enumerable.Empty<string>();
 
-        public IList<string> EventSourcesToExtract => new List<string>
-        {
-           _evtSource
-        };
-
-        public IList<OpenParam> OpenParameters => new List<OpenParam>
+        public IEnumerable<OpenParam> OpenParameters => new List<OpenParam>
         {
             new(value: "file:///hello-world.bin",
-                desc: "A resource that can be opened by this plugin. This is not used here and just serves an example.")
+                desc: "This is not used here and just serves an example.")
         };
 
-        public IList<ExtractionField> Fields => new List<ExtractionField>
+        public IEnumerable<ExtractionField> Fields => new List<ExtractionField>
         {
-            new(type: "uint64", name: "dummy.counter", display: "Counter value", desc:  "Current value of the internal counter")
+            new(type: "uint64", 
+                name: "dummy.counter", 
+                display: "Counter value", 
+                desc:  "Current value of the internal counter")
         };
 
         public void Close(IEventSourceInstance instance)
@@ -63,7 +62,7 @@ namespace Falco.Plugin.Sdk.DummyPlugin
             instance.Dispose();
         }
 
-        public IEventSourceInstance Open(IList<OpenParam>? openParams)
+        public IEventSourceInstance Open(IEnumerable<OpenParam>? openParams)
         {
             return new CounterInstance();
         }

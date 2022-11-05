@@ -42,18 +42,18 @@ namespace Falco.Plugin.Sdk
 
         public string EventSourceName => _evtSource;
 
-        public IList<string> EventSourcesToExtract => new List<string> 
+        public IEnumerable<string> EventSourcesToExtract => new List<string> 
         {
            _evtSource
         };
 
-        public IList<OpenParam> OpenParameters => new List<OpenParam>
+        public IEnumerable<OpenParam> OpenParameters => new List<OpenParam>
         {
             new(value: "file:///hello-world.bin", 
                 desc: "A resource that can be opened by this plugin. This is not used here and just serves an example.")
         };
 
-        public IList<ExtractionField> Fields => new List<ExtractionField>
+        public IEnumerable<ExtractionField> Fields => new List<ExtractionField>
         {
             new(type: "uint64", name: "dummy.counter", display: "Counter value", desc:  "Current value of the internal counter")
         };
@@ -63,7 +63,7 @@ namespace Falco.Plugin.Sdk
             instance.Dispose();
         }
 
-        public IEventSourceInstance Open(IList<OpenParam>? openParams)
+        public IEventSourceInstance Open(IEnumerable<OpenParam>? openParams)
         {
             return new CounterInstance
             {

@@ -4,9 +4,9 @@
     {
         string EventSourceName { get; }
 
-        IList<OpenParam> OpenParameters { get; }
+        IEnumerable<OpenParam> OpenParameters { get; }
 
-        IEventSourceInstance Open(IList<OpenParam>? openParams);
+        IEventSourceInstance Open(IEnumerable<OpenParam>? openParams);
 
         void Close(IEventSourceInstance instance);
     }
