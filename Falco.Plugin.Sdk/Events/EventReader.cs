@@ -9,9 +9,9 @@
             _pluginEvent = pluginEvent;
         }
 
-        public ulong EventNum => 0;
+        public ulong EventNum => _pluginEvent->EventNum;
 
-        public ulong Timestamp => _pluginEvent->TimeStamp;
+        public ulong Timestamp => _pluginEvent->Timestamp;
 
         public ReadOnlySpan<byte> Data => new(
             (void*) _pluginEvent->Data, 

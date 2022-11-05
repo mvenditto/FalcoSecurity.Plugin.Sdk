@@ -1,25 +1,31 @@
 ﻿namespace Falco.Plugin.Sdk.Events
 {
-    public struct BaseEventSourceInstance: IEventSourceInstance
+    public abstract class BaseEventSourceInstance: IEventSourceInstance
     {
-        public IEventPool EventPool { get; init; }
+        public IEventBatch EventBatch { get; init; }
 
-        public object? State { get; set;}
+        protected readonly EventSourceInstanceContext Context;
 
-        public void Dispose()
+        public long TimeoutMs { get; set; } = 0;
+
+        public BaseEventSourceInstance(int batchSize, int eventSize)
         {
-            EventPool?.Dispose();
+            Context = new();
+            EventBatch = new EventBatch(batchSize, eventSize);
         }
 
-        public string GetReadProgress(out uint progress)
+        public virtual void Dispose()
         {
-            progress = 0;
-            return "0%";
+            GC.SuppressFinalize(this);
+            EventBatch.Dispose();
         }
 
-        public int NextBatch()
-        {
-            return 0;
+        virtual public string GetReadProgress(out uint progress) 
+        { 
+            progress = 0; 
+            return string.Empty; 
         }
+
+        abstract public EventSourceInstanceContext NextBatch();
     }
 }

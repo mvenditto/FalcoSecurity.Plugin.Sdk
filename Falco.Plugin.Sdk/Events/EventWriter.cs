@@ -8,26 +8,27 @@ namespace Falco.Plugin.Sdk.Events
 
         private readonly uint _dataSize;
 
+        public PluginEvent* UnderlyingEvent => _event;
+
         public EventWriter(PluginEvent* pluginEvent, uint dataSize)
         {
             _dataSize = dataSize;
             _event = pluginEvent;
-            _event->TimeStamp = ulong.MaxValue;
+            _event->Timestamp = ulong.MaxValue;
             _event->Data = Marshal.AllocHGlobal((int) dataSize);
             _event->DataLen = 0;
-
         }
 
         public void SetTimestamp(ulong timestamp)
         {
-            _event->TimeStamp = timestamp;
+            _event->Timestamp = timestamp;
         }
 
         public void Write(ReadOnlySpan<byte> bytes)
         {
-            var span = new Span<byte>(
-                (void*)(_event->Data + (int)_event->DataLen),
-                (int)_dataSize);
+            var offset = (void*)(_event->Data + (int)_event->DataLen);
+
+            var span = new Span<byte>(offset, bytes.Length);
 
             bytes.CopyTo(span);
 

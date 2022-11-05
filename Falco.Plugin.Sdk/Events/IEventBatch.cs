@@ -1,6 +1,6 @@
 ﻿namespace Falco.Plugin.Sdk.Events
 {
-    public interface IEventPool : IDisposable
+    public interface IEventBatch : IDisposable
     {
         IEventWriter Get(int eventIndex);
 

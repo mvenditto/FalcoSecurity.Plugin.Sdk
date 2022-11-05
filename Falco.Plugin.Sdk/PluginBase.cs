@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Schema.Generation;
+﻿using Falco.Plugin.Sdk.Events;
+using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
 
 namespace Falco.Plugin.Sdk

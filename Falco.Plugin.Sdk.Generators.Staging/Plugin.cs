@@ -1,13 +1,13 @@
-﻿using Falco.Plugin.Sdk.Fields;
-using Falco.Plugin.Sdk.Events;
+﻿using Falco.Plugin.Sdk.Events;
+using Falco.Plugin.Sdk.Fields;
 
-namespace Falco.Plugin.Sdk.DummyPlugin
+namespace Falco.Plugin.Sdk
 {
     public class CounterInstance : PullEventSourceInstance
     {
         public int Counter { get; set; }
 
-        public CounterInstance() : base(batchSize: 10, eventSize: 8)
+        public CounterInstance(): base(batchSize: 10, eventSize: 8)
         {
             Counter = 1;
         }
@@ -36,20 +36,20 @@ namespace Falco.Plugin.Sdk.DummyPlugin
         Contacts = "mvenditto",
         RequiredApiVersion = "2.0.0",
         Version = "1.0.0")]
-    public class Plugin : PluginBase, IEventSource, IFieldExtractor
+    public class Plugin: PluginBase, IEventSource, IFieldExtractor
     {
         private const string _evtSource = "dummy_source";
 
         public string EventSourceName => _evtSource;
 
-        public IList<string> EventSourcesToConsume => new List<string>
+        public IList<string> EventSourcesToConsume => new List<string> 
         {
            _evtSource
         };
 
         public IList<OpenParam> OpenParameters => new List<OpenParam>
         {
-            new(value: "file:///hello-world.bin",
+            new(value: "file:///hello-world.bin", 
                 desc: "A resource that can be opened by this plugin. This is not used here and just serves an example.")
         };
 
@@ -65,13 +65,16 @@ namespace Falco.Plugin.Sdk.DummyPlugin
 
         public IEventSourceInstance Open(IList<OpenParam>? openParams)
         {
-            return new CounterInstance();
+            return new CounterInstance
+            {
+                TimeoutMs = 3
+            };
         }
 
         public void Extract(IExtractionRequest extraction, IEventReader evt)
         {
             var counter = BitConverter.ToInt32(evt.Data);
-            extraction.SetValue((ulong)counter);
+            extraction.SetValue((ulong) counter);
         }
     }
 }

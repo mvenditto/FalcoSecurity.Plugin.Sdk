@@ -8,7 +8,7 @@
 
         IList<OpenParam> OpenParameters { get; }
 
-        IEventSourceInstance Open(IList<OpenParam> openParams);
+        IEventSourceInstance Open(IList<OpenParam>? openParams);
 
         void Close(IEventSourceInstance instance);
     }

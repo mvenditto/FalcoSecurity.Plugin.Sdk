@@ -2,7 +2,7 @@
 
 namespace Falco.Plugin.Sdk.Events
 {
-    public unsafe class EventPool : IEventPool
+    public unsafe class EventBatch : IEventBatch
     {
         private int _size;
 
@@ -12,7 +12,7 @@ namespace Falco.Plugin.Sdk.Events
 
         private bool _disposed = false;
 
-        public EventPool(
+        public EventBatch(
             int size = EventSourceConsts.DefaultBatchSize,
             int dataSize = EventSourceConsts.DefaultEventSize)
         {
@@ -47,7 +47,7 @@ namespace Falco.Plugin.Sdk.Events
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(nameof(EventPool));
+                throw new ObjectDisposedException(nameof(EventBatch));
             }
 
             if (eventIndex >= _size)
@@ -55,7 +55,7 @@ namespace Falco.Plugin.Sdk.Events
                 throw new IndexOutOfRangeException($"{eventIndex} is greater or equal than {_size}");
             }
 
-            var evt = (PluginEvent*)_eventsPtr + sizeof(PluginEvent) * eventIndex;
+            var evt = &((PluginEvent*)_eventsPtr)[eventIndex];
 
             return new EventWriter(evt, (uint) _dataSize);
         }

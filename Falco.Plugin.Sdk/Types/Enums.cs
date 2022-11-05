@@ -18,7 +18,7 @@ namespace Falco.Plugin.Sdk
         Failure = 1,
         Timeout = -1,
         Eof = 2,
-        PluginNotSupported = 3,
+        NotSupported = 3,
     }
 
     public enum PluginSchemaType

@@ -14,6 +14,6 @@ namespace Falco.Plugin.Sdk.Events
 
         public uint DataLen { get; set; }
 
-        public ulong TimeStamp { get; set; }
+        public ulong Timestamp { get; set; }
     }
 }

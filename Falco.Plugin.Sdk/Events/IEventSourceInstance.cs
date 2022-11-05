@@ -2,11 +2,9 @@
 {
     public interface IEventSourceInstance: IDisposable
     {
-        IEventPool EventPool { get; init; }
+        IEventBatch EventBatch { get; init; }
 
-        object? State { get; set; }
-
-        int NextBatch();
+        EventSourceInstanceContext NextBatch();
 
         string GetReadProgress(out uint progress);
     }
