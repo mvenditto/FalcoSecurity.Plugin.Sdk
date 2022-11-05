@@ -6,7 +6,7 @@ Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, 
 
 For a full example check out the [Wiki](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Dummy-counter-plugin)!
 
-## Dummy counter sneak-peek
+## Dummy plugin sneak-peek
 ```cs
 [FalcoPlugin(
     Id = 999,
