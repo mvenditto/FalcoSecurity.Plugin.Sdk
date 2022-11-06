@@ -4,7 +4,16 @@ Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, 
 
 > ✨ Early development stage alert 
 
+## Wiki
+
 For a full example and addition information on how this works, check out the [Wiki](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Dummy-counter-plugin)!
+
+## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/NuGet_project_logo.svg/2048px-NuGet_project_logo.svg.png" width="24" />  NuGet packages
+|     |      | desc  |
+|-----|------|--|
+| Falco.Plugin.Sdk  | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk?style=flat-square&label=nuget)  | Core Plugin SDK types |
+| Falco.Plugin.Sdk.Generators | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Generators?style=flat-square&label=nuget)  | Source generators for native exports |
+| Falco.Plugin.Sdk.Template | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget) | Plugin project template to use with `dotnet new falcoplugin` |
 
 ## Dummy plugin sneak-peek
 ```cs
