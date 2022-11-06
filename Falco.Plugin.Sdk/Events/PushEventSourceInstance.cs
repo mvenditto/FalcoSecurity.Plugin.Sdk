@@ -1,15 +1,27 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Tracing;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Channels;
 
 namespace Falco.Plugin.Sdk.Events
 {
-    public readonly record struct PushEvent(
-        ulong TimestampNano,
-        ReadOnlyMemory<byte> Data,
-        Exception? Exception,
-        bool HasTimeout,
-        bool HasError);
+    public sealed record PushEvent
+    {
+        public PushEvent(ulong timestamp, ReadOnlyMemory<byte> data)
+        {
+            TimestampNano = timestamp;
+            Data = data;
+        }
+
+        public ulong TimestampNano { get; init; } = 0;
+
+        public ReadOnlyMemory<byte> Data { get; init; } = ReadOnlyMemory<byte>.Empty;
+
+        public Exception? Exception { get; init; }
+
+        public bool HasTimeout { get; init; }
+
+        public bool HasError { get; init; }
+    }
 
     public abstract class PushEventSourceInstance : BaseEventSourceInstance
     {
@@ -48,7 +60,7 @@ namespace Falco.Plugin.Sdk.Events
         public override void Dispose()
         {
             base.Dispose();
-            _channel.Writer.Complete();
+            _  =_channel.Writer.TryComplete();
             GC.SuppressFinalize(this);
         }
 

@@ -8,7 +8,7 @@
     /// batch and gets cleared by the framework
     /// after the relevant information has been consumed
     /// </remarks>
-    public record struct EventSourceInstanceContext
+    public record EventSourceInstanceContext
     {
         public uint BatchEventsNum { get; set; }
 

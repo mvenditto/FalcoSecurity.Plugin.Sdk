@@ -32,7 +32,7 @@ namespace Falco.Plugin.Sdk.DummyPlugin
     [FalcoPlugin(
         Id = 999,
         Name = "dummy_plugin",
-        Description = "A dummy plugin (nogen)",
+        Description = "A dummy plugin",
         Contacts = "mvenditto",
         RequiredApiVersion = "2.0.0",
         Version = "1.0.0")]

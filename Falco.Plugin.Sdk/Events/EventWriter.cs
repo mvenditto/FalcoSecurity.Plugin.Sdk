@@ -2,7 +2,7 @@
 
 namespace Falco.Plugin.Sdk.Events
 {
-    public readonly unsafe struct EventWriter : IEventWriter
+    public unsafe class EventWriter : IEventWriter
     {
         private readonly PluginEvent* _event;
 

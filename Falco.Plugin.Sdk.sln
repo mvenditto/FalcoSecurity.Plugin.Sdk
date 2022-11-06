@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Falco.Plugin.Sdk.Test", "Fa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Falco.Plugin.Sdk.Generators.Staging", "Falco.Plugin.Sdk.Generators.Staging\Falco.Plugin.Sdk.Generators.Staging.csproj", "{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Falco.Plugin.Sdk.PushPlugin", "Falco.Plugin.Sdk.PushPlugin\Falco.Plugin.Sdk.PushPlugin.csproj", "{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,14 @@ Global
 		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Release|x64.ActiveCfg = Release|Any CPU
 		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Release|x64.Build.0 = Release|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Debug|x64.Build.0 = Debug|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Release|x64.ActiveCfg = Release|Any CPU
+		{88D31FCB-9D4C-46C6-A5B9-AA9199CC92F2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
