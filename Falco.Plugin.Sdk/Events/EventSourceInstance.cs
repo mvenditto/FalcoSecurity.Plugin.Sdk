@@ -4,13 +4,10 @@
     {
         public IEventBatch EventBatch { get; init; }
 
-        protected readonly EventSourceInstanceContext Context;
-
         public long TimeoutMs { get; set; } = 0;
 
         public BaseEventSourceInstance(int batchSize, int eventSize)
         {
-            Context = new();
             EventBatch = new EventBatch(batchSize, eventSize);
         }
 
