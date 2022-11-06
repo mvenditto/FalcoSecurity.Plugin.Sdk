@@ -1,7 +1,7 @@
 ﻿using Falco.Plugin.Sdk.Fields;
 using Falco.Plugin.Sdk.Events;
 
-namespace Falco.Plugin.Sdk.DummyPlugin
+namespace Falco.Plugin.Sdk.PushPlugin
 {
     public class CounterInstance : PushEventSourceInstance
     {

@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "mvenditto",
+  "classifications": [ "Common", "Library" ],
+  "identity": "Falco.Plugin.Sdk.Template",
+  "name": "Falco Plugin : Empty",
+  "shortName": "falcoplugin",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}
