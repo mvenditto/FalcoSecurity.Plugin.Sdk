@@ -4,14 +4,14 @@ Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, 
 
 > ✨ Early development stage alert 
 
-For a full example check out the [Wiki](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Dummy-counter-plugin)!
+For a full example and addition information on how this works, check out the [Wiki](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Dummy-counter-plugin)!
 
 ## Dummy plugin sneak-peek
 ```cs
 [FalcoPlugin(
     Id = 999,
     Name = "dummy_plugin",
-    Description = "A dummy plugin (nogen)",
+    Description = "A dummy plugin",
     Contacts = "mvenditto",
     RequiredApiVersion = "2.0.0",
     Version = "1.0.0")]
@@ -68,9 +68,42 @@ public class CounterInstance: PullEventSourceInstance {
 }
 ```
 
-## Native plugin build pipeline
+```yaml
+- rule: Dummy counter rule
+  desc: Dummy counter equals 42
+  condition: (dummy.counter=42)
+  output: dummy.counter is 42 value=%dummy.counter
+  priority: DEBUG
+  source: dummy_source
+  tags: [dummy]
+```
+<pre><samp>admin@someplace:~$ <kbd>tree /usr/share/falco</kbd>
+/usr/share/falco/
+└── plugins
+    ├── libjson.so
+    ├── libk8saudit.so
+    └── dummy_plugin
+        ├── plugin_native.so
+        ├── Falco.Plugin.Sdk.dll
+        ├── Falco.Plugin.Sdk.DummyPlugin.dll
+        ├── Microsoft.Extensions.ObjectPool.dll
+        └── Falco.Plugin.Sdk.DummyPlugin.runtimeconfig.json</samp>
+        
+<samp>admin@someplace:~$ <kbd>falco --enable-source dummy_source</kbd>
+Sat Nov  5 18:08:52 2022: Falco version: 0.33.0 (x86_64)
+[...TRUNCATED...]
+Sat Nov  5 18:08:52 2022: Enabled event sources: dummy_source
+Sat Nov  5 18:08:52 2022: Opening event source 'dummy_source'
+Sat Nov  5 18:08:52 2022: Opening capture with plugin 'dummy_plugin'
+Sat Nov  5 18:08:52 2022: Closing event source 'dummy_source'
+18:08:52.000000000: Debug dummy.counter is 42 value=42
+Events detected: 1
+Rule counts by severity:
+   DEBUG: 1
+Triggered rules by rule name:
+   Dummy counter rule: 1
 
-<img src="docs/build_pipeline.png" width="500"/>
+admin@someplace:~$ █</samp></pre>
 
 # Note
 This sdk is **Unofficial** and is not associated nor endorsed by Sysdig and falcosecurity/falco
