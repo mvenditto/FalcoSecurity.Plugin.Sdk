@@ -8,10 +8,13 @@ namespace Falco.Plugin.Sdk.Events
 
         private Stopwatch _stopwatch;
 
+        private EventSourceInstanceContext Context;
+
         public PullEventSourceInstance(int batchSize, int eventSize):
             base(batchSize, eventSize)
         {
             _stopwatch = new Stopwatch();
+            Context = new();
         }
 
         public override void Dispose()
