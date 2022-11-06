@@ -13,7 +13,7 @@ namespace Falco.Plugin.Sdk.Events
 
     public abstract class PushEventSourceInstance : BaseEventSourceInstance
     {
-        private Channel<PushEvent> _channel;
+        private readonly Channel<PushEvent> _channel;
 
         protected readonly ChannelWriter<PushEvent> EventsChannel;
 
