@@ -11,9 +11,9 @@ For a full example and addition information on how this works, check out the [Wi
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/NuGet_project_logo.svg/2048px-NuGet_project_logo.svg.png" width="24" />  NuGet packages
 |     |      | desc  |
 |-----|------|--|
-| Falco.Plugin.Sdk  | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk?style=flat-square&label=nuget)  | Core Plugin SDK types |
-| Falco.Plugin.Sdk.Generators | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Generators?style=flat-square&label=nuget)  | Source generators for native exports |
-| Falco.Plugin.Sdk.Template | ![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget) | Plugin project template to use with `dotnet new falcoplugin` |
+| Falco.Plugin.Sdk  | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk/)  | Core Plugin SDK types |
+| Falco.Plugin.Sdk.Generators | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Generators?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Generators/)  | Source generators for native exports |
+| Falco.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Template/) | Plugin project template to use with `dotnet new falcoplugin` |
 
 ## Dummy plugin sneak-peek
 ```cs
