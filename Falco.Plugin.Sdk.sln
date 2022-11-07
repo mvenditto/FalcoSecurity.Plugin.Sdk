@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Falco.Plugin.Sdk.Generators
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Falco.Plugin.Sdk.PushPlugin", "Falco.Plugin.Sdk.PushPlugin\Falco.Plugin.Sdk.PushPlugin.csproj", "{E432F481-2DAE-4605-B8A4-4DC35BF01B40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Falco.Plugin.Sdk.DockerPlugin", "Falco.Plugin.Sdk.DockerPlugin\Falco.Plugin.Sdk.DockerPlugin.csproj", "{04D37148-4E33-41CA-9AA5-659B8B562980}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,14 @@ Global
 		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Release|x64.ActiveCfg = Release|Any CPU
 		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Release|x64.Build.0 = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|x64.Build.0 = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|x64.ActiveCfg = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
