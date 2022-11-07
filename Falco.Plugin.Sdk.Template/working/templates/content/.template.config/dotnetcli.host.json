@@ -1,0 +1,36 @@
+{
+  "symbolInfo": {
+    "pluginId": {
+      "longName": "plugin-id",
+      "shortName": "p-id"
+    },
+    "pluginName": {
+      "longName": "plugin-name",
+      "shortName": "p-name"
+    },
+	"eventSource": {
+      "longName": "plugin-evt-source",
+      "shortName": "p-evt-source"
+    },
+	"description": {
+      "longName": "plugin-desc",
+      "shortName": "p-desc"
+    },
+	"requiredApiVersion": {
+      "longName": "plugin-required-api-version",
+      "shortName": "p-req-api"
+    },
+	"pluginVersion": {
+      "longName": "plugin-version",
+      "shortName": "p-version"
+    },
+	"eventSourcingCapability": {
+      "longName": "event-sourcing-capability",
+      "shortName": "p-es-cap"
+    },
+	"fieldExtractionCapability": {
+      "longName": "field-extraction-capability",
+      "shortName": "p-fx-cap"
+    }
+  }
+}

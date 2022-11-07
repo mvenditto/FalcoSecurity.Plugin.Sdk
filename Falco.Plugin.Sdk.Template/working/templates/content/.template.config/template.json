@@ -8,5 +8,58 @@
   "tags": {
     "language": "C#",
     "type": "project"
+  },
+  "sourceName": "TPluginName",
+  "symbols":{
+    "pluginId": {
+      "type": "parameter",
+	  "dataType": "int",
+      "defaultValue": "999",
+	  "description": "the plugin ID",
+      "replaces":"PLUGIN_ID"
+    },
+    "pluginName": {
+      "type": "parameter",
+      "defaultValue": "my_plugin",
+	  "description": "the plugin name referenced by the plugin framework",
+      "replaces":"PLUGIN_NAME"
+    },
+	"eventSource": {
+      "type": "parameter",
+      "defaultValue": "my_eventsource",
+	  "description": "the plugin event source name, if present",
+      "replaces":"PLUGIN_EVTSOURCE",
+	  "isRequired": false
+    },
+	"description": {
+      "type": "parameter",
+      "defaultValue": "My Plugin description",
+	  "description": "the plugin description",
+      "replaces":"PLUGIN_DESC"
+    },
+	"requiredApiVersion": {
+      "type": "parameter",
+      "defaultValue": "2.0.0",
+	  "description": "the required plugin framework API version",
+      "replaces":"PLUGIN_REQ_API_VERSION"
+    },
+	"pluginVersion": {
+      "type": "parameter",
+      "defaultValue": "0.1.0",
+	  "description": "the plugin version",
+      "replaces":"PLUGIN_VERSION"
+    },
+	"eventSourcingCapability": {
+      "type": "parameter",
+	  "dataType": "bool",
+      "defaultValue": "true",
+	  "description": "Event sourcing capability"
+    },
+	"fieldExtractionCapability": {
+      "type": "parameter",
+	  "dataType": "bool",
+      "defaultValue": "true",
+	  "description": "Field extraction capability"
+    }
   }
 }
