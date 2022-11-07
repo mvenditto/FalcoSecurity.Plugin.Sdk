@@ -120,7 +120,10 @@ namespace Falco.Plugin.Sdk.Events
                             ? ulong.MaxValue 
                             : evt.TimestampNano);
 
-                        _stopwatch.Restart();
+                        if (TimeoutMs > 0)
+                        {
+                            _stopwatch.Restart();
+                        }
 
                         n += 1;
                     }

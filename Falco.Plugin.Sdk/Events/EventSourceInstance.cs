@@ -4,7 +4,8 @@
     {
         public IEventBatch EventBatch { get; init; }
 
-        public long TimeoutMs { get; set; } = 0;
+        public long TimeoutMs { get; set; } = 
+            EventSourceConsts.DefaultInstanceTimeoutMs;
 
         public BaseEventSourceInstance(int batchSize, int eventSize)
         {
