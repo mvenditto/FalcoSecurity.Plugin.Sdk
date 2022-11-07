@@ -13,7 +13,7 @@ For a full example and addition information on how this works, check out the [Wi
 |-----|------|--|
 | Falco.Plugin.Sdk  | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk/)  | Core Plugin SDK types |
 | Falco.Plugin.Sdk.Generators | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Generators?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Generators/)  | Source generators for native exports |
-| Falco.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Template/) | Plugin project template to use with `dotnet new falcoplugin` |
+| Falco.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Template/) | [Project template](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Getting-Started#The-falcoplugin-template) `dotnet new falcoplugin` |
 
 ## Dummy plugin sneak-peek
 ```cs
