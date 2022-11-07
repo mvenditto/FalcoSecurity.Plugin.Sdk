@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Channels;
 
 namespace Falco.Plugin.Sdk.Events
@@ -34,8 +33,8 @@ namespace Falco.Plugin.Sdk.Events
         private Stopwatch _stopwatch;
 
         protected PushEventSourceInstance(
-            int batchSize, 
-            int eventSize,
+            int batchSize = EventSourceConsts.DefaultBatchSize, 
+            int eventSize = EventSourceConsts.DefaultEventSize,
             BoundedChannelOptions? boundedChannelOptions=null):  base(batchSize, eventSize)
         {
             var opts = boundedChannelOptions ?? new BoundedChannelOptions(batchSize)
@@ -116,9 +115,11 @@ namespace Falco.Plugin.Sdk.Events
 
                         writer.Write(evt.Data.Span);
 
-                        writer.SetTimestamp(evt.TimestampNano == 0 
-                            ? ulong.MaxValue 
-                            : evt.TimestampNano);
+                        var ts = evt.TimestampNano == 0
+                            ? ulong.MaxValue
+                            : evt.TimestampNano;
+
+                        writer.SetTimestamp(ts);
 
                         if (TimeoutMs > 0)
                         {

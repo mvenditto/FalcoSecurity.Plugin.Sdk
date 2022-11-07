@@ -7,7 +7,9 @@
         public long TimeoutMs { get; set; } = 
             EventSourceConsts.DefaultInstanceTimeoutMs;
 
-        public BaseEventSourceInstance(int batchSize, int eventSize)
+        public BaseEventSourceInstance(
+            int batchSize = EventSourceConsts.DefaultBatchSize,
+            int eventSize = EventSourceConsts.DefaultEventSize)
         {
             EventBatch = new EventBatch(batchSize, eventSize);
         }
