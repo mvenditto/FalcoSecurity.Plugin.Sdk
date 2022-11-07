@@ -12,6 +12,7 @@
 
 
 		<Title>The source generator for Falco.Plugin.Sdk</Title>
+		<Version>1.0.1</Version>
 		<Authors>mvenditto</Authors>
 		<Company>mvenditto</Company>
 		<Description>The source generator for Falco.Plugin.Sdk</Description>
