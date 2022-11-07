@@ -11,7 +11,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="DNNE" Version="1.0.32" />
-		<PackageReference Include="Falco.Plugin.Sdk" Version="1.0.0" />
-		<PackageReference Include="Falco.Plugin.Sdk.Generators" Version="1.0.0" />
+		<PackageReference Include="Falco.Plugin.Sdk" Version="1.0.3" />
+		<PackageReference Include="Falco.Plugin.Sdk.Generators" Version="1.0.1" />
 	</ItemGroup>
 </Project>
