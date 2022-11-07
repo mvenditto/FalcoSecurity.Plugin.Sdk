@@ -128,8 +128,15 @@ namespace Falco.Plugin.Sdk
         [UnmanagedCallersOnly(EntryPoint = "plugin_init", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static PluginStateOpaquePtr Init(IntPtr configString, IntPtr returnCode)
         {
-            _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
-            _requestPool = new ExtractionRequestPool(_numFields * 2);
+            if (_pluginHasEventSourceCapability)
+            {
+                _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
+            }
+
+            if (_pluginHasFieldExtractCapability)
+            {
+                _requestPool = new ExtractionRequestPool(_numFields * 2);
+            }
 
             Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
             return _pluginState;
