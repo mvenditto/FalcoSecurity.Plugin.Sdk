@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.2.1</PackageVersion>
     <PackageId>Falco.Plugin.Sdk.Template</PackageId>
     <Title>Falco Plugin: Empty</Title>
     <Authors>mvenditto</Authors>
