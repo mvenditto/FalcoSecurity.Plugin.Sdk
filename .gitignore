@@ -3,7 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-*.sh
 
 # User-specific files
 *.rsuser
@@ -14,10 +13,12 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-*.sh
+*.bat
 
 # Mono auto generated files
 mono_crash.*
+
+/_ignore
 
 # Build results
 [Dd]ebug/
@@ -35,6 +36,8 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+[Bb]uild/
+[Tt]esting/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
