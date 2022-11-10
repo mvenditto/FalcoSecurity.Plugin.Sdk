@@ -201,7 +201,7 @@ namespace NAMESPACE_PLACEHOLDER
         static CLASSNAME_PLACEHOLDER_NativeExports()
         {
             /* 'demographic' strings the returned strings must remain valid until the plugin is destroyed. */
-            var pluginInfo = (FalcoPluginAttribute) Attribute.GetCustomAttribute(typeof(Plugin), typeof(FalcoPluginAttribute));
+            var pluginInfo = (FalcoPluginAttribute) Attribute.GetCustomAttribute(typeof(CLASSNAME_PLACEHOLDER), typeof(FalcoPluginAttribute));
             _pluginId = pluginInfo.Id;
             _pluginDescription = Marshal.StringToCoTaskMemUTF8(pluginInfo.Description);
             _pluginRequiredApiVersion = Marshal.StringToCoTaskMemUTF8(pluginInfo.RequiredApiVersion);
