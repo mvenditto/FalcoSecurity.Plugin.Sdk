@@ -5,7 +5,11 @@
 
 Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, powered by [DNNE](https://github.com/AaronRobinsonMSFT/DNNE) native exports
 
-> ✨ Early development stage alert 
+> :warning: The repo and related packages has been ranemed as follows due to a name ambiguity (Another project on NuGet is also named Falco...) <br>
+    The actual change is: `Falco.X.Y.Z` -> `FalcoSecurity.X.Y.Z`. <br>
+    I take this opportunity to also amend the versioning; the version was bumbed to 1.0.0 way too fast conveing a false sense of stability: <br>
+    The actual change is: `1.X.Y` -> `1.{X+1}.Y`. <br>
+    I apologize for the inconvenience.
 
 ## Wiki
 
