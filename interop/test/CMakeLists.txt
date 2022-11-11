@@ -33,7 +33,7 @@ add_test(
 )
 
 include(GoogleTest)
-include_directories(../../Falco.Plugin.Sdk/)
+include_directories(../../FalcoSecurity.Plugin.Sdk/)
 
 gtest_discover_tests(integration_test)
 

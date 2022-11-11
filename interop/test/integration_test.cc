@@ -100,7 +100,7 @@ void plugin_unload(plugin_handle_t* h)
 }
 
 const char* PLUGIN_LIB_PATH = 
-	"../../Falco.Plugin.Sdk.TestPlugin/bin/Release/net6.0/linux-x64/plugin_native.so";
+	"../../FalcoSecurity.Plugin.Sdk.TestPlugin/bin/Release/net6.0/linux-x64/plugin_native.so";
 	
 class PluginIntegrationTest : public testing::Test 
 {

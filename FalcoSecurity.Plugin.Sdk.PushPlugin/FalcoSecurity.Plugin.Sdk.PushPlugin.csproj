@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+		<DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+		<DnneNativeBinaryName>plugin_native</DnneNativeBinaryName>
+		<PublishSingleFile>true</PublishSingleFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="DNNE" Version="1.0.32" />
+		<PackageReference Include="FalcoSecurity.Plugin.Sdk" Version="1.0.0" />
+		<PackageReference Include="FalcoSecurity.Plugin.Sdk.Generators" Version="1.0.0" />
+	</ItemGroup>
+</Project>

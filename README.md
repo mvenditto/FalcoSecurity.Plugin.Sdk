@@ -1,4 +1,4 @@
-# Falco.Plugin.Sdk
+# FalcoSecurity.Plugin.Sdk
 
 ![Custom badge](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgist.githubusercontent.com%2Fmvenditto%2F1f05448331025247c1c3375ebe2ba5cf%2Fraw%2F935e97d07d5e67a5cc250fb347a4c72b87ee2ec6%2Ffalco-plugin-sdk_plugin-api-version.json)
 <br>
@@ -9,14 +9,14 @@ Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, 
 
 ## Wiki
 
-For a full example and addition information on how this works, check out the [Wiki](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Dummy-counter-plugin)!
+For a full example and addition information on how this works, check out the [Wiki](https://github.com/mvenditto/FalcoSecurity.Plugin.Sdk/wiki/Dummy-counter-plugin)!
 
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/NuGet_project_logo.svg/2048px-NuGet_project_logo.svg.png" width="24" />  NuGet packages
 |     |      | desc  |
 |-----|------|--|
-| Falco.Plugin.Sdk  | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk/)  | Core Plugin SDK types |
-| Falco.Plugin.Sdk.Generators | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Generators?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Generators/)  | Source generators for native exports |
-| Falco.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/Falco.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/Falco.Plugin.Sdk.Template/) | [Project template](https://github.com/mvenditto/Falco.Plugin.Sdk/wiki/Getting-Started#The-falcoplugin-template) `dotnet new falcoplugin` |
+| FalcoSecurity.Plugin.Sdk  | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk/)  | Core Plugin SDK types |
+| FalcoSecurity.Plugin.Sdk.Generators | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk.Generators?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk.Generators/)  | Source generators for native exports |
+| FalcoSecurity.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk.Template/) | [Project template](https://github.com/mvenditto/FalcoSecurity.Plugin.Sdk/wiki/Getting-Started#The-falcoplugin-template) `dotnet new falcoplugin` |
 
 ## Dummy plugin sneak-peek
 ```cs
@@ -96,10 +96,10 @@ public class CounterInstance: PullEventSourceInstance {
     ├── libk8saudit.so
     └── dummy_plugin
         ├── plugin_native.so
-        ├── Falco.Plugin.Sdk.dll
-        ├── Falco.Plugin.Sdk.DummyPlugin.dll
+        ├── FalcoSecurity.Plugin.Sdk.dll
+        ├── FalcoSecurity.Plugin.Sdk.DummyPlugin.dll
         ├── Microsoft.Extensions.ObjectPool.dll
-        └── Falco.Plugin.Sdk.DummyPlugin.runtimeconfig.json</samp>
+        └── FalcoSecurity.Plugin.Sdk.DummyPlugin.runtimeconfig.json</samp>
         
 <samp>admin@someplace:~$ <kbd>falco --enable-source dummy_source</kbd>
 Sat Nov  5 18:08:52 2022: Falco version: 0.33.0 (x86_64)

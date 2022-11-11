@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk", "FalcoSecurity.Plugin.Sdk\FalcoSecurity.Plugin.Sdk.csproj", "{20B03A8A-FE52-49D8-8782-CB1B29E0388F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.DummyPlugin", "FalcoSecurity.Plugin.Sdk.DummyPlugin\FalcoSecurity.Plugin.Sdk.DummyPlugin.csproj", "{D2CAD3F2-0245-4AF0-AF3A-90E26C4FA536}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Generators", "FalcoSecurity.Plugin.Sdk.Generators\FalcoSecurity.Plugin.Sdk.Generators.csproj", "{885010E1-FC54-4E90-8E56-8DD125527EDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Test", "FalcoSecurity.Plugin.Sdk.Test\FalcoSecurity.Plugin.Sdk.Test.csproj", "{B14C8EF9-DDAC-42FD-A8EB-1D9CE4599F4C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Generators.Staging", "FalcoSecurity.Plugin.Sdk.Generators.Staging\FalcoSecurity.Plugin.Sdk.Generators.Staging.csproj", "{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.PushPlugin", "FalcoSecurity.Plugin.Sdk.PushPlugin\FalcoSecurity.Plugin.Sdk.PushPlugin.csproj", "{E432F481-2DAE-4605-B8A4-4DC35BF01B40}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.DockerPlugin", "FalcoSecurity.Plugin.Sdk.DockerPlugin\FalcoSecurity.Plugin.Sdk.DockerPlugin.csproj", "{04D37148-4E33-41CA-9AA5-659B8B562980}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "interop", "interop", "{2ED7CF45-A7B6-4F82-984F-6D1820B6E673}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{02E2E5E1-DB25-4148-9273-6DDF4C6270DD}"
+	ProjectSection(SolutionItems) = preProject
+		interop\test\build.sh = interop\test\build.sh
+		interop\test\CMakeLists.txt = interop\test\CMakeLists.txt
+		interop\test\integration_test.cc = interop\test\integration_test.cc
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.TestPlugin", "FalcoSecurity.Plugin.Sdk.TestPlugin\FalcoSecurity.Plugin.Sdk.TestPlugin.csproj", "{47CA297C-1592-4B81-91B4-836A854AEB45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20B03A8A-FE52-49D8-8782-CB1B29E0388F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20B03A8A-FE52-49D8-8782-CB1B29E0388F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20B03A8A-FE52-49D8-8782-CB1B29E0388F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20B03A8A-FE52-49D8-8782-CB1B29E0388F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CAD3F2-0245-4AF0-AF3A-90E26C4FA536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CAD3F2-0245-4AF0-AF3A-90E26C4FA536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CAD3F2-0245-4AF0-AF3A-90E26C4FA536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CAD3F2-0245-4AF0-AF3A-90E26C4FA536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{885010E1-FC54-4E90-8E56-8DD125527EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{885010E1-FC54-4E90-8E56-8DD125527EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{885010E1-FC54-4E90-8E56-8DD125527EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{885010E1-FC54-4E90-8E56-8DD125527EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B14C8EF9-DDAC-42FD-A8EB-1D9CE4599F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B14C8EF9-DDAC-42FD-A8EB-1D9CE4599F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B14C8EF9-DDAC-42FD-A8EB-1D9CE4599F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B14C8EF9-DDAC-42FD-A8EB-1D9CE4599F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F5C492C-6E9F-495D-8BF2-1C0954D4518A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E432F481-2DAE-4605-B8A4-4DC35BF01B40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47CA297C-1592-4B81-91B4-836A854AEB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47CA297C-1592-4B81-91B4-836A854AEB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47CA297C-1592-4B81-91B4-836A854AEB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47CA297C-1592-4B81-91B4-836A854AEB45}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02E2E5E1-DB25-4148-9273-6DDF4C6270DD} = {2ED7CF45-A7B6-4F82-984F-6D1820B6E673}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {045714E0-927C-40CF-B110-01EEB6A9596A}
+	EndGlobalSection
+EndGlobal
