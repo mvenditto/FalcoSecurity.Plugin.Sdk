@@ -14,6 +14,13 @@
 #define SYM_RESOLVE(h, s) \
     *(void **)(&(h->api.s)) = getsym(h->handle, "plugin_"#s)
 
+typedef enum
+{
+    CAP_NONE = 0,
+    CAP_SOURCING = 1 << 0,
+    CAP_EXTRACTION = 1 << 1
+} plugin_caps_t;
+
 typedef struct plugin_handle_t
 {
 #ifdef _WIN32
@@ -99,10 +106,32 @@ void plugin_unload(plugin_handle_t* h)
     }
 }
 
+plugin_caps_t plugin_get_capabilities(const plugin_handle_t* h)
+{
+    plugin_caps_t caps = CAP_NONE;
+
+    if (h->api.get_id != NULL
+        && h->api.get_event_source != NULL
+        && h->api.open != NULL
+        && h->api.close != NULL
+        && h->api.next_batch != NULL)
+    {
+        caps = (plugin_caps_t)((uint32_t)caps | (uint32_t)CAP_SOURCING);
+    }
+
+    if (h->api.get_fields != NULL
+        && h->api.extract_fields != NULL)
+    {
+        caps = (plugin_caps_t)((uint32_t)caps | (uint32_t)CAP_EXTRACTION);
+    }
+
+    return caps;
+}
+
 const char* PLUGIN_LIB_PATH = 
 	"../../FalcoSecurity.Plugin.Sdk.TestPlugin/bin/Release/net6.0/linux-x64/plugin_native.so";
 	
-class PluginIntegrationTest : public testing::Test 
+class PluginIntegrationTest : public testing::Test
 {
 	protected:
 		plugin_handle_t* _plugin_handle;
@@ -151,6 +180,13 @@ TEST_F(PluginIntegrationTest, PluginGetName)
 TEST_F(PluginIntegrationTest, PluginGetVersion)
 {
 	ASSERT_STREQ(_plugin.get_version(), "1.2.3");
+}
+
+TEST_F(PluginIntegrationTest, PluginHasExpectedCaps)
+{
+    auto caps = (uint32_t) plugin_get_capabilities(_plugin_handle);
+    ASSERT_EQ(caps && (uint32_t)CAP_SOURCING, true);
+    ASSERT_EQ(caps && (uint32_t)CAP_EXTRACTION, true);
 }
 
 int main(int argc, char** argv) {
