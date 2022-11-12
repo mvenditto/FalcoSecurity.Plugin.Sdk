@@ -97,7 +97,7 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                 fullNamespace = fullNamespace.Substring(1);
             }
 
-            var templateSource = Helpers.GetEmbeddedContent("PluginNativeExports.cssbn");
+            var templateSource = Helpers.GetEmbeddedContent("PluginNativeExports.sbncs");
             
             var template = Template.Parse(templateSource);
             
