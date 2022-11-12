@@ -34,6 +34,20 @@
 		<PackageReference Include="Scriban " Version="5.5.0" PrivateAssets="all" GeneratePathProperty="true" />
 	</ItemGroup>
 
+	<PropertyGroup>
+		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+	</PropertyGroup>
+
+	<Target Name="GetDependencyTargetPaths">
+		<ItemGroup>
+			<TargetPathWithTargetPlatformMoniker 
+				Include="$(PkgScriban)\lib\netstandard2.0\*.dll" 
+				PackagePath="analyzers/dotnet/cs"
+				Pack="true" 
+				IncludeRuntimeDependency="false" />
+		</ItemGroup>
+	</Target>
+
 	<ItemGroup>
 	  <None Remove="bin\Release\netstandard2.0\\FalcoSecurity.Plugin.Sdk.Generators.dll" />
 	</ItemGroup>
@@ -42,8 +56,8 @@
 		<!-- Package the generator in the analyzer directory of the nuget package -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		
-		<!-- Include Scriban as a compile time dependency -->
-		<None Include="$(PkgScriban)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<!-- Include Scriban as a compile time dependency 
+		<None Include="$(PkgScriban)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" /> -->
 		<EmbeddedResource Include="PluginNativeExports.cssbn" />
 		
 		<!-- Package the props file -->

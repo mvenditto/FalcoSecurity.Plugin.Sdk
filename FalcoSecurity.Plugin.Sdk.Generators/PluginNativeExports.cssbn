@@ -5,12 +5,12 @@ using System.Text.Json;
 using FalcoSecurity.Plugin.Sdk.Events;
 using FalcoSecurity.Plugin.Sdk.Fields;
 
-namespace NAMESPACE_PLACEHOLDER
+namespace {{namespace}}
 {
     using PluginStateOpaquePtr = IntPtr;
     using EventSourceInstanceOpaquePtr = IntPtr;
 
-    public static unsafe class CLASSNAME_PLACEHOLDER_NativeExports
+    public static unsafe class {{class_name}}_NativeExports
     {
         private static IntPtr _pluginName;
 
@@ -34,13 +34,7 @@ namespace NAMESPACE_PLACEHOLDER
 
         private static uint _pluginId = 0;
 
-        private static CLASSNAME_PLACEHOLDER _plugin = new();
-
-        private const bool _pluginHasEventSourceCapability = HAS_EVENT_SOURCE_CAP;
-
-        private const bool _pluginHasFieldExtractCapability = HAS_FIELD_EXTRACT_CAP;
-
-        private const bool _pluginHasConfig = HAS_CONFIG;
+        private static {{class_name}} _plugin = new();
 
         private static ulong _instanceId = 0;
 
@@ -53,10 +47,14 @@ namespace NAMESPACE_PLACEHOLDER
         // must be non-null, or some funcs like list_opem_params will early-exit
         private static IntPtr _pluginState = Marshal.AllocHGlobal(1);
 
-        static CLASSNAME_PLACEHOLDER_NativeExports()
+        static {{class_name}}_NativeExports()
         {
             /* 'demographic' strings the returned strings must remain valid until the plugin is destroyed. */
-            var pluginInfo = (FalcoPluginAttribute) Attribute.GetCustomAttribute(typeof(CLASSNAME_PLACEHOLDER), typeof(FalcoPluginAttribute));
+
+            var pluginInfo = (FalcoPluginAttribute) Attribute.GetCustomAttribute(
+                typeof({{class_name}}), 
+                typeof(FalcoPluginAttribute));
+
             _pluginId = pluginInfo.Id;
             _pluginDescription = Marshal.StringToCoTaskMemUTF8(pluginInfo.Description);
             _pluginRequiredApiVersion = Marshal.StringToCoTaskMemUTF8(pluginInfo.RequiredApiVersion);
@@ -64,43 +62,35 @@ namespace NAMESPACE_PLACEHOLDER
             _pluginContact = Marshal.StringToCoTaskMemUTF8(pluginInfo.Contacts);
             _pluginName = Marshal.StringToCoTaskMemUTF8(pluginInfo.Name);
             
-            // BEGIN_PLUGIN_CONFIG
-            if (_pluginHasConfig)
+{{ # CONFIGURATION }}
+{{ if has_configuration }}
+            if (_plugin.TryGenerateJsonSchema(out var jsonSchema))
             {
-                if (_plugin.TryGenerateJsonSchema(out var jsonSchema))
-                {
-                    _pluginSchema = Marshal.StringToCoTaskMemUTF8(jsonSchema);
-                }
+                _pluginSchema = Marshal.StringToCoTaskMemUTF8(jsonSchema);
             }
-            // END_PLUGIN_CONFIG
+{{ end }}
 
-    #pragma warning disable CS0162 // Unreachable code detected
-            if (_pluginHasEventSourceCapability)
-            {
-                var eventSource = (IEventSource) _plugin;
-                _eventSourceName = Marshal.StringToCoTaskMemUTF8(eventSource.EventSourceName);
-                var openParams = eventSource.OpenParameters;
-                var openParamsJson = JsonSerializer.Serialize(openParams);
-                _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(openParamsJson);
-            }
-            else 
-            {
-                _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
-            } 
+{{ # EVENT_SOURCING }}
+{{ if has_event_sourcing_capability }}
+            var eventSource = (IEventSource) _plugin;
+            _eventSourceName = Marshal.StringToCoTaskMemUTF8(eventSource.EventSourceName);
+            var openParams = eventSource.OpenParameters;
+            var openParamsJson = JsonSerializer.Serialize(openParams);
+            _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(openParamsJson);  
+{{ else }}
+            _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
+{{ end }}
 
-            if (_pluginHasFieldExtractCapability)
-            {
-                var fieldExtractor = (IFieldExtractor) _plugin;
-                var fields = fieldExtractor.Fields;
-                _numFields = fields.Count();
-                var fieldsJson = JsonSerializer.Serialize(fields);
-                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
-            }
-            else 
-            {
-                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
-            }
-    #pragma warning restore CS0162 // Unreachable code detected
+{{ # FIELD_EXTRACTION}}
+{{ if has_field_extraction_capability }}
+            var fieldExtractor = (IFieldExtractor) _plugin;
+            var fields = fieldExtractor.Fields;
+            _numFields = fields.Count();
+            var fieldsJson = JsonSerializer.Serialize(fields);
+            _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
+{{ else }}
+            _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
+{{ end }}
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_required_api_version", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -127,16 +117,12 @@ namespace NAMESPACE_PLACEHOLDER
         [UnmanagedCallersOnly(EntryPoint = "plugin_init", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static PluginStateOpaquePtr Init(IntPtr configString, IntPtr returnCode)
         {
-            if (_pluginHasEventSourceCapability)
-            {
-                _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
-            }
-
-            if (_pluginHasFieldExtractCapability)
-            {
-                _requestPool = new ExtractionRequestPool(_numFields * 2);
-            }
-            
+{{ if has_event_sourcing_capability }}
+            _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
+{{- end -}}
+{{ if has_field_extraction_capability }}
+            _requestPool = new ExtractionRequestPool(_numFields * 2);
+{{ end }}         
             Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
             return _pluginState;
         }
@@ -153,7 +139,7 @@ namespace NAMESPACE_PLACEHOLDER
             Marshal.FreeHGlobal(_fieldsJsonArray);
             Marshal.FreeHGlobal(_openParamsJsonArray);
             Marshal.FreeHGlobal(pluginState);
-
+{{ if has_field_extraction_capability }}
             try
             {
                 if (typeof(IDisposable).IsAssignableFrom(_requestPool.Pool.GetType()))
@@ -165,7 +151,8 @@ namespace NAMESPACE_PLACEHOLDER
             {
                 Console.Error.WriteLine(ex.ToString());
             }
-
+{{ end }}
+{{ if has_event_sourcing_capability }}
             try
             {
                 foreach(var i in _instanceTable.Values)
@@ -177,6 +164,7 @@ namespace NAMESPACE_PLACEHOLDER
             {
                 Console.Error.WriteLine(ex.ToString());
             }
+{{ end }}
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_last_error", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -211,7 +199,7 @@ namespace NAMESPACE_PLACEHOLDER
             return _pluginVersion;
         }
 
-    #region Event sourcing capability API
+        #region Event sourcing capability API
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_id", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static uint GetId()
@@ -219,13 +207,13 @@ namespace NAMESPACE_PLACEHOLDER
             return _pluginId;
         }
 
-        // BEGIN_PLUGIN_CAP_DATA_SOURCE
+{{ if has_event_sourcing_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_event_source", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetEventSourceName()
         {
             return _eventSourceName;
         }
-        // END_PLUGIN_CAP_DATA_SOURCE
+{{ end }}
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_open", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static EventSourceInstanceOpaquePtr Open(PluginStateOpaquePtr pluginState, IntPtr paramsString, IntPtr returnCode)
@@ -358,17 +346,17 @@ namespace NAMESPACE_PLACEHOLDER
             }
         }
 
-    #endregion
+        #endregion
 
-    #region Field extraction capability API
+        #region Field extraction capability API
 
-        // BEGIN_PLUGIN_CAP_FIELD_EXTRACTION
+{{ if has_field_extraction_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_fields", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetFields()
         {
             return _fieldsJsonArray;
         }
-        // END_PLUGIN_CAP_FIELD_EXTRACTION
+{{ end }}
 
         /// <remarks>
         /// When returning extracted string values via plugin_extract_fields, 
@@ -400,6 +388,6 @@ namespace NAMESPACE_PLACEHOLDER
                 return (int)PluginReturnCode.Failure;
             }
         }
-    #endregion
+        #endregion
     }
 }

@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
+using Scriban;
 
 namespace FalcoSecurity.Plugin.Sdk.Generators
 {
@@ -96,37 +97,18 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                 fullNamespace = fullNamespace.Substring(1);
             }
 
-            var template = Helpers.GetEmbeddedContent("PluginNativeExports.cssbn");
-
-            var source = template
-                .Replace("NAMESPACE_PLACEHOLDER", fullNamespace);
-
-            source = source
-                .Replace("CLASSNAME_PLACEHOLDER", className)
-                .Replace("HAS_CONFIG", hasConfig ? "true": "false")
-                .Replace("HAS_EVENT_SOURCE_CAP", hasEventSourceCapability ? "true" : "false")
-                .Replace("HAS_FIELD_EXTRACT_CAP", hasFieldExtractionCapability ? "true" : "false");
-
-            if (hasConfig == false)
+            var templateSource = Helpers.GetEmbeddedContent("PluginNativeExports.cssbn");
+            
+            var template = Template.Parse(templateSource);
+            
+            var source = template.Render(new SourceGenenerationParams
             {
-                source = source
-                    .Replace("// BEGIN_PLUGIN_CONFIG", "/*")
-                    .Replace("// END_PLUGIN_CONFIG", "*/");
-            }
-
-            if (hasEventSourceCapability == false)
-            {
-                source = source
-                    .Replace("// BEGIN_PLUGIN_CAP_DATA_SOURCE", "/*")
-                    .Replace("// END_PLUGIN_CAP_DATA_SOURCE", "*/");
-            }
-
-            if (hasFieldExtractionCapability == false)
-            {
-                source = source
-                    .Replace("// BEGIN_PLUGIN_CAP_FIELD_EXTRACTION", "/*")
-                    .Replace("// END_PLUGIN_CAP_FIELD_EXTRACTION", "*/");
-            }
+                ClassName = className,
+                Namespace = fullNamespace,
+                HasConfiguration = hasConfig,
+                HasEventSourcingCapability = hasEventSourceCapability,
+                HasFieldExtractionCapability = hasFieldExtractionCapability
+            });
 
             context.AddSource($"{className}NativeExports.g.cs", source);
         }
