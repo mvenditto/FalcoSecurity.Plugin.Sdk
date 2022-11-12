@@ -199,21 +199,18 @@ namespace {{namespace}}
             return _pluginVersion;
         }
 
-        #region Event sourcing capability API
-
+{{ if has_event_sourcing_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_id", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static uint GetId()
         {
             return _pluginId;
         }
 
-{{ if has_event_sourcing_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_event_source", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetEventSourceName()
         {
             return _eventSourceName;
         }
-{{ end }}
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_open", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static EventSourceInstanceOpaquePtr Open(PluginStateOpaquePtr pluginState, IntPtr paramsString, IntPtr returnCode)
@@ -346,18 +343,13 @@ namespace {{namespace}}
             }
         }
 
-        #endregion
-
-        #region Field extraction capability API
-
+{{ end }}
 {{ if has_field_extraction_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_fields", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetFields()
         {
             return _fieldsJsonArray;
         }
-{{ end }}
-
         /// <remarks>
         /// When returning extracted string values via plugin_extract_fields, 
         /// every extracted string must remain valid until the next call to plugin_extract_fields
@@ -388,6 +380,6 @@ namespace {{namespace}}
                 return (int)PluginReturnCode.Failure;
             }
         }
-        #endregion
+{{ end }}
     }
 }
