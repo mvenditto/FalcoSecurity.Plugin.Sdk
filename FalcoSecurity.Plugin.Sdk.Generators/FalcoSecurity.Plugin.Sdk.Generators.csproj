@@ -44,8 +44,10 @@
 		
 		<!-- Include Scriban as a compile time dependency -->
 		<None Include="$(PkgScriban)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<EmbeddedResource Include="PluginNativeExports.cssbn" />
 		
 		<!-- Package the props file -->
-		<None Include="FalcoPluginGenerator.props" Pack="true" PackagePath="build" Visible="false" />
+		<None Include="FalcoSecurity.Plugin.Sdk.Generators.props" Pack="true" PackagePath="build" Visible="false" />
+		
 	</ItemGroup>
 </Project>
