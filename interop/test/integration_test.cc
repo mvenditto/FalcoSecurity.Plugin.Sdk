@@ -128,18 +128,18 @@ plugin_caps_t plugin_get_capabilities(const plugin_handle_t* h)
     return caps;
 }
 
-const char* PLUGIN_LIB_PATH = 
-	"../../FalcoSecurity.Plugin.Sdk.TestPlugin/bin/Release/net6.0/linux-x64/plugin_native.so";
-	
-class PluginIntegrationTest : public testing::Test
+class PluginBaseTest : public testing::Test
 {
 	protected:
 		plugin_handle_t* _plugin_handle;
 		plugin_api _plugin;
+        virtual const char* getPluginPath() {
+            return "../../test-plugins/PluginAll/bin/Release/net6.0/linux-x64/plugin_native.so";
+        };
 	public:
 		void SetUp() override 
 		{
-			_plugin_handle = plugin_load(PLUGIN_LIB_PATH);
+			_plugin_handle = plugin_load(getPluginPath());
 			_plugin = _plugin_handle->api;
 		}
 		
@@ -150,17 +150,31 @@ class PluginIntegrationTest : public testing::Test
 		}
 };
 
+class PluginEventSourceOnlyTest : public PluginBaseTest
+{
+    virtual const char* getPluginPath() override {
+        return "../../test-plugins/PluginEventSourceOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
+    };
+};
+
+class PluginFieldExtractionOnlyTest : public PluginBaseTest
+{
+    virtual const char* getPluginPath() override {
+        return "../../test-plugins/PluginFieldExtractionOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
+    };
+};
+
 #define ASSERT_SYM(a, s) \
     do { \
         ASSERT_NE(a.s, nullptr); \
     } while(0)
 
-TEST_F(PluginIntegrationTest, PluginLoad) 
+TEST_F(PluginBaseTest, PluginLoad) 
 {
 	ASSERT_NE(_plugin_handle, nullptr);
 }
 
-TEST_F(PluginIntegrationTest, PluginHasRequiredSymbols)
+TEST_F(PluginBaseTest, PluginHasRequiredSymbols)
 {
     ASSERT_SYM(_plugin, get_required_api_version);
     ASSERT_SYM(_plugin, get_version);
@@ -172,21 +186,58 @@ TEST_F(PluginIntegrationTest, PluginHasRequiredSymbols)
     ASSERT_SYM(_plugin, get_last_error);
 }
 
-TEST_F(PluginIntegrationTest, PluginGetName)
+TEST_F(PluginBaseTest, PluginGetName)
 {
 	ASSERT_STREQ(_plugin.get_name(), "test_plugin");
 }
 
-TEST_F(PluginIntegrationTest, PluginGetVersion)
+TEST_F(PluginBaseTest, PluginGetVersion)
 {
 	ASSERT_STREQ(_plugin.get_version(), "1.2.3");
 }
 
-TEST_F(PluginIntegrationTest, PluginHasExpectedCaps)
+TEST_F(PluginBaseTest, PluginGetContacts)
+{
+    ASSERT_STREQ(_plugin.get_contact(), "<test test@test.com>");
+}
+
+TEST_F(PluginBaseTest, PluginGetDescription)
+{
+    ASSERT_STREQ(_plugin.get_description(), "test description!");
+}
+
+TEST_F(PluginBaseTest, PluginHasExpectedCaps)
 {
     auto caps = (uint32_t) plugin_get_capabilities(_plugin_handle);
     ASSERT_EQ(caps && (uint32_t)CAP_SOURCING, true);
     ASSERT_EQ(caps && (uint32_t)CAP_EXTRACTION, true);
+}
+
+TEST_F(PluginBaseTest, PluginGetEventSource)
+{
+    ASSERT_STREQ(_plugin.get_event_source(), "test_eventsource");
+}
+
+TEST_F(PluginEventSourceOnlyTest, PluginGetId)
+{
+    ASSERT_EQ(_plugin.get_id(), 999);
+}
+
+TEST_F(PluginEventSourceOnlyTest, PluginGetEventSource2)
+{
+    ASSERT_STREQ(_plugin.get_event_source(), "test_eventsource");
+}
+
+TEST_F(PluginEventSourceOnlyTest, PluginHasEventSourcingCapOnly)
+{
+    auto caps = (uint32_t)plugin_get_capabilities(_plugin_handle);
+    ASSERT_EQ(caps, CAP_SOURCING);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginHasEventSourcingCapOnly)
+{
+    auto caps = (uint32_t)plugin_get_capabilities(_plugin_handle);
+    ASSERT_EQ(caps, CAP_EXTRACTION);
 }
 
 int main(int argc, char** argv) {

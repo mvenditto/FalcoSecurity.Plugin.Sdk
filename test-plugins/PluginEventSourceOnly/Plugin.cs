@@ -5,8 +5,8 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 {
     [FalcoPlugin(
         Id = 999,
-        Name = "test.event_source_only",
-        Description = "test description!",
+        Name = "test_plugin",
+        Description = "test_description_string!",
         Contacts = "<test test@test.com>",
         RequiredApiVersion = "2.0.0",
         Version = "1.2.3")]
