@@ -11,7 +11,7 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput> <!-- Do not include the generator as a lib dependency -->
 
 		<Title>The source generator for FalcoSecurity.Plugin.Sdk</Title>
-		<Version>0.2.3</Version>
+		<Version>0.2.3-dev</Version>
 		<Authors>mvenditto</Authors>
 		<Company>mvenditto</Company>
 		<Description>The source generator for FalcoSecurity.Plugin.Sdk</Description>
@@ -56,8 +56,7 @@
 		<!-- Package the generator in the analyzer directory of the nuget package -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		
-		<!-- Include Scriban as a compile time dependency 
-		<None Include="$(PkgScriban)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" /> -->
+		<!-- Include Scriban as a compile time dependency -->
 		<EmbeddedResource Include="PluginNativeExports.cssbn" />
 		
 		<!-- Package the props file -->
