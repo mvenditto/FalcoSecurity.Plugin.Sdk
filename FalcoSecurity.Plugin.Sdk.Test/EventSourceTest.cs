@@ -1,14 +1,36 @@
 ﻿using FalcoSecurity.Plugin.Sdk.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FalcoSecurity.Plugin.Sdk.Test
 {
+
+    internal class TestPushEventSource : PushEventSourceInstance
+    {
+        public int Counter { get; private set; }
+
+        public TestPushEventSource(int batchSize, int eventSize) : base(batchSize, eventSize)
+        {
+            TimeoutMs = 0;
+
+            Task.Run(async () =>
+            {
+                while (Counter < EventSourceConsts.DefaultBatchSize)
+                {
+                    Counter += 1;
+
+                    await EventsChannel.WriteAsync(new(
+                        ulong.MaxValue,
+                        BitConverter.GetBytes(Counter))
+                    );
+                }
+
+                EventsChannel.Complete();
+            });
+        }
+    }
+
     public unsafe class EventSourceTest
     {
         private static ReadOnlySpan<byte> RandomBytes(int dataSize)
@@ -24,6 +46,38 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             using var eventPool = new EventBatch(size: 1, dataSize: 1);
 
             Assert.Equal(1, eventPool.Length);
+        }
+
+        [Fact]
+        public void EventPoolGetWriteRead()
+        {
+            using var eventPool = new EventBatch(
+                size: EventSourceConsts.DefaultBatchSize, 
+                dataSize: EventSourceConsts.DefaultEventSize);
+
+            Assert.Equal(
+                EventSourceConsts.DefaultBatchSize, 
+                eventPool.Length);
+
+            for (var i = 0; i < EventSourceConsts.DefaultBatchSize; i++)
+            {
+                var e = eventPool.Get(i);
+                e.Write(BitConverter.GetBytes(i));
+            }
+
+            unsafe
+            {
+                var eventsPtr = eventPool.UnderlyingArray;
+
+                for (var i = 0; i < EventSourceConsts.DefaultBatchSize; i++)
+                {
+                    var evtPtr = ((PluginEvent*)eventsPtr)[i];
+                    var reader = new EventReader(&evtPtr);
+                    var bytes = reader.Data.ToArray();
+                    var data = BitConverter.ToInt32(bytes);
+                    Assert.Equal(i, data);
+                }
+            }
         }
 
         [Fact]
@@ -86,6 +140,79 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             {
                 Marshal.FreeHGlobal(evt->Data);
                 Marshal.FreeHGlobal((IntPtr)evt);
+            }
+        }
+
+        [Fact]
+        public void PushEventSourceInstanceTest()
+        {
+            var instance = new TestPushEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            EventSourceInstanceContext ctx = null;
+
+            uint totEvents = 0;
+
+            for (var i = 0; i < EventSourceConsts.DefaultBatchSize; i++)
+            {
+                ctx = instance.NextBatch();
+                totEvents += ctx.BatchEventsNum;
+                if (ctx.IsEof)
+                {
+                    break;
+                }
+            }
+
+            Assert.True(ctx!.IsEof);
+            Assert.Equal((uint) EventSourceConsts.DefaultBatchSize, totEvents);
+
+            unsafe
+            {
+                var eventsPtr = instance.EventBatch.UnderlyingArray;
+
+                for (var i = 0; i < EventSourceConsts.DefaultBatchSize; i++)
+                {
+                    var evtPtr = ((PluginEvent*)eventsPtr)[i];
+                    var reader = new EventReader(&evtPtr);
+                    var bytes = reader.Data.ToArray();
+                    var data = BitConverter.ToInt32(bytes);
+                    Assert.Equal(i + 1, data);
+                }
+            }
+        }
+
+        [Fact]
+        public void PullEventSourceInstanceTest()
+        {
+            using var instance = new TestPullEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            var ctx = instance.NextBatch();
+
+            Assert.True(ctx.IsEof);
+
+            Assert.Equal(
+                (uint) EventSourceConsts.DefaultBatchSize,
+                ctx.BatchEventsNum);
+
+            Assert.Equal(
+                EventSourceConsts.DefaultBatchSize,
+                instance.EventBatch.Length);
+
+            unsafe
+            {
+                var eventsPtr = instance.EventBatch.UnderlyingArray;
+
+                for (var i = 0; i < EventSourceConsts.DefaultBatchSize; i++)
+                {
+                    var evtPtr = ((PluginEvent*)eventsPtr)[i];
+                    var reader = new EventReader(&evtPtr);
+                    var bytes = reader.Data.ToArray();
+                    var data = BitConverter.ToInt32(bytes);
+                    Assert.Equal(i + 1, data);
+                }
             }
         }
     }

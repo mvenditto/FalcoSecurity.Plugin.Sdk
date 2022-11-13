@@ -13,7 +13,9 @@ namespace FalcoSecurity.Plugin.Sdk.DummyPlugin
 
         private readonly DockerClient _client;
 
-        public DockerEventSourceInstance() : base(batchSize: 10)
+        public DockerEventSourceInstance() : base(
+            batchSize: 10, 
+            eventSize: EventSourceConsts.DefaultEventSize)
         {
             _client = new DockerClientConfiguration()
                 .CreateClient();
