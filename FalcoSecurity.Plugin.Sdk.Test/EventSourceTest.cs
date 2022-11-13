@@ -1,36 +1,14 @@
 ﻿using FalcoSecurity.Plugin.Sdk.Events;
+using System.Diagnostics.Metrics;
+using System.Diagnostics.Tracing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Channels;
 using Xunit;
 
 namespace FalcoSecurity.Plugin.Sdk.Test
 {
-
-    internal class TestPushEventSource : PushEventSourceInstance
-    {
-        public int Counter { get; private set; }
-
-        public TestPushEventSource(int batchSize, int eventSize) : base(batchSize, eventSize)
-        {
-            TimeoutMs = 0;
-
-            Task.Run(async () =>
-            {
-                while (Counter < EventSourceConsts.DefaultBatchSize)
-                {
-                    Counter += 1;
-
-                    await EventsChannel.WriteAsync(new(
-                        ulong.MaxValue,
-                        BitConverter.GetBytes(Counter))
-                    );
-                }
-
-                EventsChannel.Complete();
-            });
-        }
-    }
-
     public unsafe class EventSourceTest
     {
         private static ReadOnlySpan<byte> RandomBytes(int dataSize)
@@ -81,6 +59,62 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
+        public void GetOnDisposedEventBatchThrows()
+        {
+            var batch = new EventBatch(1, 1);
+            batch.Dispose();
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                _ = batch.Get(0);
+            });
+        }
+
+        [Fact]
+        public void GetOutOfRangeOnEventBatchThrows()
+        {
+            using var batch = new EventBatch(1, 1);
+            Assert.Throws<IndexOutOfRangeException>(() =>
+            {
+                _ = batch.Get(2);
+            });
+        }
+
+        [Fact]
+        public void EventWriterNew()
+        {
+            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var ew = new EventWriter(evt, 1);
+            try
+            {
+                Assert.Equal((nint) evt, (nint) ew.UnderlyingEvent);
+                ew.Free();
+                Assert.Equal(0u, evt->DataLen);
+                Assert.Equal(IntPtr.Zero, evt->Data);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal((IntPtr)evt);
+            }
+        }
+
+        [Fact]
+        public void EventWriterFree()
+        {
+            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var ew = new EventWriter(evt, 1);
+            try
+            {
+                ew.Free();
+                Assert.Equal(0u, evt->DataLen);
+                Assert.Equal(IntPtr.Zero, evt->Data);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal((IntPtr) evt);
+            }
+        }
+
+        [Fact]
         public void ReadWriteArbitraryData()
         {
             var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
@@ -105,6 +139,8 @@ namespace FalcoSecurity.Plugin.Sdk.Test
                 {
                     Assert.Equal(data[i], evtData[i]);
                 }
+
+                ew.Free();
             }
             finally
             {
@@ -150,6 +186,27 @@ namespace FalcoSecurity.Plugin.Sdk.Test
                     EventSourceConsts.DefaultBatchSize,
                     EventSourceConsts.DefaultEventSize);
 
+            void producer(ChannelWriter<PushEvent> channel, Action eof)
+            {
+                Task.Run(() =>
+                {
+                    while (instance.Counter < EventSourceConsts.DefaultBatchSize)
+                    {
+                        instance.Counter += 1;
+                        channel.TryWrite(new(
+                            ulong.MaxValue,
+                                BitConverter.GetBytes(instance.Counter))
+                            );
+                    }
+
+                    eof();
+                });
+            }
+
+            instance.EventProducer = producer;
+
+            instance.Start();
+                
             EventSourceInstanceContext ctx = null;
 
             uint totEvents = 0;
@@ -183,11 +240,114 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
+        public void PushEvenSourceShouldPropagateError()
+        {
+            var instance = new TestPushEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            static void Producer(ChannelWriter<PushEvent> channel, Action eof)
+            {
+                channel.TryWrite(new PushEvent(
+                    ulong.MaxValue,
+                    ReadOnlyMemory<byte>.Empty)
+                {
+                    HasError = true,
+                    Exception = new Exception()
+                });
+            }
+
+            instance.EventProducer = Producer;
+
+            instance.Start();
+
+            var ctx = instance.NextBatch();
+
+            Assert.True(ctx.HasFailure);
+        }
+
+        [Fact]
+        public void PushEvenSourceTimeout()
+        {
+            var instance = new TestPushEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            var timeout = 1;
+
+            instance.TimeoutMs = timeout;
+
+            void Producer(ChannelWriter<PushEvent> channel, Action eof)
+            {
+                Thread.Sleep(timeout * 3);
+            }
+
+            instance.EventProducer = Producer;
+
+            instance.Start();
+
+            var ctx = instance.NextBatch();
+
+            Assert.True(ctx.HasTimeout);
+        }
+
+        [Fact(Skip = "")]
+        public void PullEventSourceShouldTimeout()
+        {
+            using var instance = new TestPullEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            var timeout = 1;
+
+            instance.TimeoutMs = timeout;
+
+            instance.PullEventDelegate = (ctx, evt) =>
+            {
+                Thread.Sleep(timeout * 3);
+            };
+
+            var ctx = instance.NextBatch();
+
+            Assert.True(ctx.HasTimeout);
+        }
+
+        [Fact]
+        public void PullEvenSourceShouldPropagateError()
+        {
+            using var instance = new TestPullEventSource(
+                    EventSourceConsts.DefaultBatchSize,
+                    EventSourceConsts.DefaultEventSize);
+
+            instance.PullEventDelegate = (ctx, evt) =>
+            {
+                throw new Exception();
+            };
+
+            var ctx = instance.NextBatch();
+
+            Assert.True(ctx.HasFailure);
+        }
+
+        [Fact]
         public void PullEventSourceInstanceTest()
         {
             using var instance = new TestPullEventSource(
                     EventSourceConsts.DefaultBatchSize,
                     EventSourceConsts.DefaultEventSize);
+
+            instance.PullEventDelegate = (ctx, evt) =>
+            {
+
+                instance.Counter += 1;
+
+                if (instance.Counter >= EventSourceConsts.DefaultBatchSize)
+                {
+                    ctx.IsEof = true;
+                }
+
+                evt.Write(BitConverter.GetBytes(instance.Counter));
+            };
 
             var ctx = instance.NextBatch();
 
