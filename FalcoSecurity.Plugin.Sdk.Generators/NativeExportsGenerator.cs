@@ -41,12 +41,6 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                         asy, context.CancellationToken).Type?.Name == "FalcoPluginAttribute"))
                 .FirstOrDefault();
 
-            var attribute = pluginClass
-                .DescendantNodes()
-                .OfType<AttributeSyntax>()
-                .FirstOrDefault(asy => semanticModel.GetTypeInfo(
-                    asy, context.CancellationToken).Type?.Name == "FalcoPluginAttribute");
-
             if (pluginClass == null) return;
 
             var pluginClassSymbol = semanticModel.GetDeclaredSymbol(pluginClass);
@@ -69,6 +63,9 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                         break;
                     case "IConfigurable":
                         hasConfig = true;
+                        break;
+                    default:
+                        // ignore
                         break;
                 }
             }

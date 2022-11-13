@@ -6,7 +6,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
     /// ss_plugin_event 
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct PluginEvent
+    public struct PluginEvent: IEquatable<PluginEvent>
     {
         public ulong EventNum { get; set; }
 
@@ -15,5 +15,10 @@ namespace FalcoSecurity.Plugin.Sdk.Events
         public uint DataLen { get; set; }
 
         public ulong Timestamp { get; set; }
+
+        public bool Equals(PluginEvent other)
+        {
+            return other.EventNum == EventNum;
+        }
     }
 }
