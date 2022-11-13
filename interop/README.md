@@ -12,20 +12,46 @@ The `build.sh` script build the `Falco.Plugin.Sdk.TestPlugin` project and execut
 
 ### Example output
 ```
-[==========] Running 4 tests from 1 test suite.
+[==========] Running 14 tests from 3 test suites.
 [----------] Global test environment set-up.
-[----------] 4 tests from PluginIntegrationTest
-[ RUN      ] PluginIntegrationTest.PluginLoad
-[       OK ] PluginIntegrationTest.PluginLoad (4 ms)
-[ RUN      ] PluginIntegrationTest.PluginHasRequiredSymbols
-[       OK ] PluginIntegrationTest.PluginHasRequiredSymbols (4 ms)
-[ RUN      ] PluginIntegrationTest.PluginGetName
-[       OK ] PluginIntegrationTest.PluginGetName (124 ms)
-[ RUN      ] PluginIntegrationTest.PluginGetVersion
-[       OK ] PluginIntegrationTest.PluginGetVersion (13 ms)
-[----------] 4 tests from PluginIntegrationTest (147 ms total)
+[----------] 8 tests from PluginBaseTest
+[ RUN      ] PluginBaseTest.PluginLoad
+[       OK ] PluginBaseTest.PluginLoad (5 ms)
+[ RUN      ] PluginBaseTest.PluginHasRequiredSymbols
+[       OK ] PluginBaseTest.PluginHasRequiredSymbols (5 ms)
+[ RUN      ] PluginBaseTest.PluginGetName
+[       OK ] PluginBaseTest.PluginGetName (101 ms)
+[ RUN      ] PluginBaseTest.PluginGetVersion
+[       OK ] PluginBaseTest.PluginGetVersion (11 ms)
+[ RUN      ] PluginBaseTest.PluginGetContacts
+[       OK ] PluginBaseTest.PluginGetContacts (10 ms)
+[ RUN      ] PluginBaseTest.PluginGetDescription
+[       OK ] PluginBaseTest.PluginGetDescription (11 ms)
+[ RUN      ] PluginBaseTest.PluginHasExpectedCaps
+[       OK ] PluginBaseTest.PluginHasExpectedCaps (3 ms)
+[ RUN      ] PluginBaseTest.PluginGetEventSource
+[       OK ] PluginBaseTest.PluginGetEventSource (11 ms)
+[----------] 8 tests from PluginBaseTest (160 ms total)
+
+[----------] 3 tests from PluginEventSourceOnlyTest
+[ RUN      ] PluginEventSourceOnlyTest.PluginGetId
+[       OK ] PluginEventSourceOnlyTest.PluginGetId (23 ms)
+[ RUN      ] PluginEventSourceOnlyTest.PluginGetEventSource2
+[       OK ] PluginEventSourceOnlyTest.PluginGetEventSource2 (11 ms)
+[ RUN      ] PluginEventSourceOnlyTest.PluginHasEventSourcingCapOnly
+[       OK ] PluginEventSourceOnlyTest.PluginHasEventSourcingCapOnly (3 ms)
+[----------] 3 tests from PluginEventSourceOnlyTest (38 ms total)
+
+[----------] 3 tests from PluginFieldExtractionOnlyTest
+[ RUN      ] PluginFieldExtractionOnlyTest.PluginHasEventSourcingCapOnly
+[       OK ] PluginFieldExtractionOnlyTest.PluginHasEventSourcingCapOnly (4 ms)
+[ RUN      ] PluginFieldExtractionOnlyTest.PluginGetFields
+[       OK ] PluginFieldExtractionOnlyTest.PluginGetFields (45 ms)
+[ RUN      ] PluginFieldExtractionOnlyTest.PluginGetExtractionSources
+[       OK ] PluginFieldExtractionOnlyTest.PluginGetExtractionSources (12 ms)
+[----------] 3 tests from PluginFieldExtractionOnlyTest (62 ms total)
 
 [----------] Global test environment tear-down
-[==========] 4 tests from 1 test suite ran. (147 ms total)
-[  PASSED  ] 4 tests.
+[==========] 14 tests from 3 test suites ran. (261 ms total)
+[  PASSED  ] 14 tests.
 ```
