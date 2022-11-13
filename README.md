@@ -12,6 +12,7 @@ For a full example and addition information on how this works, check out the [Wi
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/NuGet_project_logo.svg/2048px-NuGet_project_logo.svg.png" width="24" />  NuGet packages
 |     |      | desc  | changelog |
 |-----|------|-------|-----------|
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/fa47b13df4414d8ba3298cf777fe74a4)](https://app.codacy.com/gh/mvenditto/FalcoSecurity.Plugin.Sdk?utm_source=github.com&utm_medium=referral&utm_content=mvenditto/FalcoSecurity.Plugin.Sdk&utm_campaign=Badge_Grade_Settings)
 | FalcoSecurity.Plugin.Sdk  | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk/)  | Core Plugin SDK types |  |     
 | FalcoSecurity.Plugin.Sdk.Generators | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk.Generators?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk.Generators/)  | Source generators for native exports | [CHANGELOG.md](https://github.com/mvenditto/FalcoSecurity.Plugin.Sdk/blob/master/FalcoSecurity.Plugin.Sdk.Generators/CHANGELOG.md) |
 | FalcoSecurity.Plugin.Sdk.Template | [![](https://img.shields.io/nuget/v/FalcoSecurity.Plugin.Sdk.Template?style=flat-square&label=nuget)](https://www.nuget.org/packages/FalcoSecurity.Plugin.Sdk.Template/) | [Project template](https://github.com/mvenditto/FalcoSecurity.Plugin.Sdk/wiki/Getting-Started#The-falcoplugin-template) `dotnet new falcoplugin` |  |
