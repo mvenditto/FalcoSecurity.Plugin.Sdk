@@ -12,9 +12,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         private bool _disposed = false;
 
-        public EventBatch(
-            int size = EventSourceConsts.DefaultBatchSize,
-            int dataSize = EventSourceConsts.DefaultEventSize)
+        public EventBatch(int size, int dataSize)
         {
             _size = size;
 

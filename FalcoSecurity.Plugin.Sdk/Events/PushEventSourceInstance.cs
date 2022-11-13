@@ -30,11 +30,11 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         private bool _eofReached = false;
 
-        private Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch;
 
         protected PushEventSourceInstance(
-            int batchSize = EventSourceConsts.DefaultBatchSize, 
-            int eventSize = EventSourceConsts.DefaultEventSize,
+            int batchSize, 
+            int eventSize,
             BoundedChannelOptions? boundedChannelOptions=null):  base(batchSize, eventSize)
         {
             var opts = boundedChannelOptions ?? new BoundedChannelOptions(batchSize)

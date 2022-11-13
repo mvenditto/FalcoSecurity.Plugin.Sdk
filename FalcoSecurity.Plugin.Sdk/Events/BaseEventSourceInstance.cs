@@ -7,11 +7,17 @@
         public long TimeoutMs { get; set; } = 
             EventSourceConsts.DefaultInstanceTimeoutMs;
 
-        public BaseEventSourceInstance(
-            int batchSize = EventSourceConsts.DefaultBatchSize,
-            int eventSize = EventSourceConsts.DefaultEventSize)
+        protected BaseEventSourceInstance(int batchSize, int eventSize)
         {
             EventBatch = new EventBatch(batchSize, eventSize);
+        }
+
+        protected BaseEventSourceInstance(): this(
+                batchSize: EventSourceConsts.DefaultBatchSize,
+                eventSize: EventSourceConsts.DefaultEventSize
+            )
+        {
+
         }
 
         public virtual void Dispose()

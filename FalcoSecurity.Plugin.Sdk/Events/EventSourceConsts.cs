@@ -2,10 +2,10 @@
 {
     public static class EventSourceConsts
     {
-        public const int DefaultBatchSize = 512;
+        public static readonly int DefaultBatchSize = 512;
 
-        public const int DefaultEventSize = 64 * 1024;
+        public static readonly int DefaultEventSize = 64 * 1024;
 
-        public const long DefaultInstanceTimeoutMs = 30;
+        public static readonly long DefaultInstanceTimeoutMs = 30;
     }
 }

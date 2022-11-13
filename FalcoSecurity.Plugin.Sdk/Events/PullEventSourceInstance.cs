@@ -6,11 +6,11 @@ namespace FalcoSecurity.Plugin.Sdk.Events
     {
         private bool _eofReached = false;
 
-        private Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch;
 
-        private EventSourceInstanceContext Context;
+        private readonly EventSourceInstanceContext Context;
 
-        public PullEventSourceInstance(int batchSize, int eventSize):
+        protected PullEventSourceInstance(int batchSize, int eventSize):
             base(batchSize, eventSize)
         {
             _stopwatch = new Stopwatch();

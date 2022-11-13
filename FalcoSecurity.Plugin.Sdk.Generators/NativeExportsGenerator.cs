@@ -41,11 +41,17 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                         asy, context.CancellationToken).Type?.Name == "FalcoPluginAttribute"))
                 .FirstOrDefault();
 
-            if (pluginClass == null) return;
+            if (pluginClass == null)
+            {
+                return;
+            }
 
             var pluginClassSymbol = semanticModel.GetDeclaredSymbol(pluginClass);
 
-            if (pluginClassSymbol == null) return;
+            if (pluginClassSymbol == null)
+            {
+                return;
+            }
 
             var hasEventSourceCapability = false;
             var hasFieldExtractionCapability = false;
