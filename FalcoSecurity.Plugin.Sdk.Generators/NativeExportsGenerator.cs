@@ -110,8 +110,6 @@ namespace FalcoSecurity.Plugin.Sdk.Generators
                 HasFieldExtractionCapability = hasFieldExtractionCapability
             });
 
-            // File.WriteAllText(@"C:\tmp\TEST.cs", source);
-
             context.AddSource($"{className}NativeExports.g.cs", source);
         }
 
