@@ -1,6 +1,6 @@
 # FalcoSecurity.Plugin.Sdk
 
-![Codacy grade](https://img.shields.io/codacy/grade/71314d20dbc64028bc80d4291272af2d?style=for-the-badge) ![Coverage](https://img.shields.io/codecov/c/github/mvenditto/FalcoSecurity.Plugin.Sdk?style=for-the-badge&token=KNEH3735KU&logo=codecov) ![Custom badge](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgist.githubusercontent.com%2Fmvenditto%2F1f05448331025247c1c3375ebe2ba5cf%2Fraw%2F935e97d07d5e67a5cc250fb347a4c72b87ee2ec6%2Ffalco-plugin-sdk_plugin-api-version.json)
+![Codacy grade](https://img.shields.io/codacy/grade/71314d20dbc64028bc80d4291272af2d?style=for-the-badge) [![Coverage](https://img.shields.io/codecov/c/github/mvenditto/FalcoSecurity.Plugin.Sdk?style=for-the-badge&token=KNEH3735KU&logo=codecov)](https://app.codecov.io/gh/mvenditto/FalcoSecurity.Plugin.Sdk) ![Custom badge](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgist.githubusercontent.com%2Fmvenditto%2F1f05448331025247c1c3375ebe2ba5cf%2Fraw%2F935e97d07d5e67a5cc250fb347a4c72b87ee2ec6%2Ffalco-plugin-sdk_plugin-api-version.json)
 
 Unofficial [Falco](https://github.com/falcosecurity/falco) plugin SDK for .NET, powered by [DNNE](https://github.com/AaronRobinsonMSFT/DNNE) native exports
 
