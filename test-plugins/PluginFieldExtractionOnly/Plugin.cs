@@ -12,12 +12,17 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         Version = "1.2.3")]
     public class TestPlugin : PluginBase, IFieldExtractor		
     {
-        public IEnumerable<ExtractionField> Fields
-            => Enumerable.Empty<ExtractionField>();
+        public IEnumerable<ExtractionField> Fields => new List<ExtractionField>
+        {
+            new(type: "uint64", name: "test.int", desc: "an int field", display: "<int>"),
+            new(type: "string", name: "test.str", desc: "a str field", display: "<str>"),
+        };
 
-
-        public IEnumerable<string> EventSourcesToExtract
-            => Enumerable.Empty<string>();
+        public IEnumerable<string> EventSourcesToExtract => new List<string>
+        {
+            "some_evt_source_1",
+            "some_evt_source_2"
+        };
 
         public void Extract(IExtractionRequest extraction, IEventReader evt)
         {

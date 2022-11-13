@@ -203,7 +203,7 @@ TEST_F(PluginBaseTest, PluginGetContacts)
 
 TEST_F(PluginBaseTest, PluginGetDescription)
 {
-    ASSERT_STREQ(_plugin.get_description(), "test description!");
+    ASSERT_STREQ(_plugin.get_description(), "test_description_string!");
 }
 
 TEST_F(PluginBaseTest, PluginHasExpectedCaps)
@@ -238,6 +238,18 @@ TEST_F(PluginFieldExtractionOnlyTest, PluginHasEventSourcingCapOnly)
 {
     auto caps = (uint32_t)plugin_get_capabilities(_plugin_handle);
     ASSERT_EQ(caps, CAP_EXTRACTION);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginGetFields)
+{
+    const char* fieldsJson = "[{\"name\":\"test.int\",\"type\":\"uint64\",\"display\":\"\\u003Cint\\u003E\",\"desc\":\"an int field\"},{\"name\":\"test.str\",\"type\":\"string\",\"display\":\"\\u003Cstr\\u003E\",\"desc\":\"a str field\"}]";
+    ASSERT_STREQ(_plugin.get_fields(), fieldsJson);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginGetExtractionSources)
+{
+    const char* sourcesJson = "[\"some_evt_source_1\",\"some_evt_source_2\"]";
+    ASSERT_STREQ(_plugin.get_extract_event_sources(), sourcesJson);
 }
 
 int main(int argc, char** argv) {
