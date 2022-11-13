@@ -4,10 +4,10 @@ using Xunit;
 
 namespace FalcoSecurity.Plugin.Sdk.Test
 {
-    public unsafe class ExtractFieldTest
+    public class ExtractFieldTest
     {
         [Fact]
-        public void ExtractionRequestSetU64ArrayValue()
+        unsafe public void ExtractionRequestSetU64ArrayValue()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -57,7 +57,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ExtractionRequestSetU64Value()
+        unsafe public void ExtractionRequestSetU64Value()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -92,7 +92,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ExtractionRequestSetStringValue()
+        unsafe public void ExtractionRequestSetStringValue()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -131,7 +131,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ExtractionRequestSetStringArrayValue()
+        unsafe public void ExtractionRequestSetStringArrayValue()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -175,7 +175,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionIfWritingU64ToStringTypeField()
+        unsafe public void ShouldThrowArgumentExceptionIfWritingU64ToStringTypeField()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -207,7 +207,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionIfWritingStringToU64TypeField()
+        unsafe public void ShouldThrowArgumentExceptionIfWritingStringToU64TypeField()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -239,7 +239,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionIfWritingListToNonListField()
+        unsafe public void ShouldThrowArgumentExceptionIfWritingListToNonListField()
         {
             var fieldPtr = IntPtr.Zero;
             try
@@ -271,7 +271,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         }
 
         [Fact]
-        public void ExtractionRequestPoolReturnMustNotFreeResourcesTest()
+        unsafe public void ExtractionRequestPoolReturnMustNotFreeResourcesTest()
         {
             var fieldPtr = IntPtr.Zero;
             try
