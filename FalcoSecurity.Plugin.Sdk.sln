@@ -26,7 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{02E2E5E1-D
 		interop\test\integration_test.cc = interop\test\integration_test.cc
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.TestPlugin", "FalcoSecurity.Plugin.Sdk.TestPlugin\FalcoSecurity.Plugin.Sdk.TestPlugin.csproj", "{47CA297C-1592-4B81-91B4-836A854AEB45}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-plugins", "test-plugins", "{015ACF97-FB3C-4E5B-ADD9-25F1D6B2CADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Test.PluginAllCaps", "test-plugins\PluginAll\FalcoSecurity.Plugin.Sdk.Test.PluginAllCaps.csproj", "{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Test.PluginEventSourceOnly", "test-plugins\PluginEventSourceOnly\FalcoSecurity.Plugin.Sdk.Test.PluginEventSourceOnly.csproj", "{A60C31AF-3FB3-4578-BBB8-950C6051F8A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FalcoSecurity.Plugin.Sdk.Test.PluginFieldExtractionOnly", "test-plugins\PluginFieldExtractionOnly\FalcoSecurity.Plugin.Sdk.Test.PluginFieldExtractionOnly.csproj", "{DFED0630-7E6B-4084-B245-BD5F7C6889C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,16 +68,27 @@ Global
 		{04D37148-4E33-41CA-9AA5-659B8B562980}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04D37148-4E33-41CA-9AA5-659B8B562980}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47CA297C-1592-4B81-91B4-836A854AEB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47CA297C-1592-4B81-91B4-836A854AEB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47CA297C-1592-4B81-91B4-836A854AEB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47CA297C-1592-4B81-91B4-836A854AEB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A60C31AF-3FB3-4578-BBB8-950C6051F8A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A60C31AF-3FB3-4578-BBB8-950C6051F8A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A60C31AF-3FB3-4578-BBB8-950C6051F8A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A60C31AF-3FB3-4578-BBB8-950C6051F8A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFED0630-7E6B-4084-B245-BD5F7C6889C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFED0630-7E6B-4084-B245-BD5F7C6889C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFED0630-7E6B-4084-B245-BD5F7C6889C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFED0630-7E6B-4084-B245-BD5F7C6889C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{02E2E5E1-DB25-4148-9273-6DDF4C6270DD} = {2ED7CF45-A7B6-4F82-984F-6D1820B6E673}
+		{483B3123-ECC8-42BF-A8BA-AA56D5EFACCC} = {015ACF97-FB3C-4E5B-ADD9-25F1D6B2CADF}
+		{A60C31AF-3FB3-4578-BBB8-950C6051F8A0} = {015ACF97-FB3C-4E5B-ADD9-25F1D6B2CADF}
+		{DFED0630-7E6B-4084-B245-BD5F7C6889C1} = {015ACF97-FB3C-4E5B-ADD9-25F1D6B2CADF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {045714E0-927C-40CF-B110-01EEB6A9596A}

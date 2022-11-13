@@ -8,12 +8,13 @@
 		<DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
 		<DnneNativeBinaryName>plugin_native</DnneNativeBinaryName>
 		<PublishSingleFile>true</PublishSingleFile>
+		<DnneCompilerUserFlags>$(DnneCompilerUserFlags)$(MSBuildThisFileDirectory)override.c</DnneCompilerUserFlags>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="DNNE" Version="1.0.32" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\FalcoSecurity.Plugin.Sdk.Generators\FalcoSecurity.Plugin.Sdk.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\FalcoSecurity.Plugin.Sdk\FalcoSecurity.Plugin.Sdk.csproj" />
+		<ProjectReference Include="..\..\FalcoSecurity.Plugin.Sdk\FalcoSecurity.Plugin.Sdk.csproj" />
+		<ProjectReference Include="..\..\FalcoSecurity.Plugin.Sdk.Generators\FalcoSecurity.Plugin.Sdk.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 </Project>

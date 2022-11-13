@@ -6,8 +6,8 @@ namespace FalcoSecurity.Plugin.Sdk.Test
     [FalcoPlugin(
         Id = 999,
         Name = "test_plugin",
-        Description = "test_description_string",
-        Contacts = "me",
+        Description = "test_description_string!",
+        Contacts = "<test test@test.com>",
         RequiredApiVersion = "2.0.0",
         Version = "1.2.3")]
     public class TestPlugin : PluginBase, IEventSource, IFieldExtractor		
