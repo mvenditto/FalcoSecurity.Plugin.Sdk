@@ -1,4 +1,6 @@
 ﻿// auto-generated
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -13,36 +15,32 @@ namespace {{namespace}}
     public static unsafe class {{class_name}}_NativeExports
     {
         private static IntPtr _pluginName;
-
         private static IntPtr _pluginDescription;
-
         private static IntPtr _pluginRequiredApiVersion;
-
         private static IntPtr _pluginVersion;
-
         private static IntPtr _pluginContact;
 
+{{ if has_event_sourcing_capability }}
         private static IntPtr _eventSourceName;
+        private static IntPtr _openParamsJsonArray; 
+        private static ulong _instanceId = 0;
+        private static IDictionary<ulong, IEventSourceInstance> _instanceTable;
+{{ end }}
 
+{{ if has_configuration }}
         private static IntPtr _pluginSchema = IntPtr.Zero;
-
+{{ end }}
         private static IntPtr _pluginLastError = IntPtr.Zero;
 
-        private static IntPtr _openParamsJsonArray;
-
+{{ if has_field_extraction_capability }}
         private static IntPtr _fieldsJsonArray;
+        private static IntPtr _extractionSourcesJsonArray;
+        private static ExtractionRequestPool _requestPool;
+        private static int _numFields;
+{{ end }}
 
         private static uint _pluginId = 0;
-
         private static {{class_name}} _plugin = new();
-
-        private static ulong _instanceId = 0;
-
-        private static ExtractionRequestPool _requestPool;
-
-        private static IDictionary<ulong, IEventSourceInstance> _instanceTable;
-
-        private static int _numFields;
 
         // must be non-null, or some funcs like list_opem_params will early-exit
         private static IntPtr _pluginState = Marshal.AllocHGlobal(1);
@@ -62,7 +60,6 @@ namespace {{namespace}}
             _pluginContact = Marshal.StringToCoTaskMemUTF8(pluginInfo.Contacts);
             _pluginName = Marshal.StringToCoTaskMemUTF8(pluginInfo.Name);
             
-{{ # CONFIGURATION }}
 {{ if has_configuration }}
             if (_plugin.TryGenerateJsonSchema(out var jsonSchema))
             {
@@ -70,101 +67,56 @@ namespace {{namespace}}
             }
 {{ end }}
 
-{{ # EVENT_SOURCING }}
 {{ if has_event_sourcing_capability }}
             var eventSource = (IEventSource) _plugin;
             _eventSourceName = Marshal.StringToCoTaskMemUTF8(eventSource.EventSourceName);
             var openParams = eventSource.OpenParameters;
-            var openParamsJson = JsonSerializer.Serialize(openParams);
-            _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(openParamsJson);  
-{{ else }}
-            _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
-{{ end }}
-
-{{ # FIELD_EXTRACTION}}
-{{ if has_field_extraction_capability }}
-            var fieldExtractor = (IFieldExtractor) _plugin;
-            var fields = fieldExtractor.Fields;
-            _numFields = fields.Count();
-            var fieldsJson = JsonSerializer.Serialize(fields);
-            _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
-{{ else }}
-            _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
-{{ end }}
-        }
-
-        [UnmanagedCallersOnly(EntryPoint = "plugin_get_required_api_version", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static IntPtr GetRequiredApiVersion()
-        {
-            return _pluginRequiredApiVersion;
-        }
-
-        [UnmanagedCallersOnly(EntryPoint = "plugin_get_init_schema", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static IntPtr GetInitSchema(IntPtr schemaType)
-        {
-            if (_pluginSchema != IntPtr.Zero)
+            if (openParams != null && openParams.Count() > 0)
             {
-                Marshal.WriteInt32(schemaType, (int)PluginSchemaType.Json);
+                var openParamsJson = JsonSerializer.Serialize(openParams);
+                _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8(openParamsJson);  
             }
             else
             {
-                Marshal.WriteInt32(schemaType, (int)PluginSchemaType.None);
-            }
-
-            return _pluginSchema;
-        }
-
-        [UnmanagedCallersOnly(EntryPoint = "plugin_init", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static PluginStateOpaquePtr Init(IntPtr configString, IntPtr returnCode)
-        {
-{{ if has_event_sourcing_capability }}
-            _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
-{{- end -}}
-{{ if has_field_extraction_capability }}
-            _requestPool = new ExtractionRequestPool(_numFields * 2);
-{{ end }}         
-            Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
-            return _pluginState;
-        }
-
-        [UnmanagedCallersOnly(EntryPoint = "plugin_destroy", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static void Destroy(PluginStateOpaquePtr pluginState)
-        {
-            Marshal.FreeHGlobal(_pluginRequiredApiVersion);
-            Marshal.FreeHGlobal(_pluginName);
-            Marshal.FreeHGlobal(_pluginVersion);
-            Marshal.FreeHGlobal(_pluginSchema);
-            Marshal.FreeHGlobal(_pluginContact);
-            Marshal.FreeHGlobal(_pluginDescription);
-            Marshal.FreeHGlobal(_fieldsJsonArray);
-            Marshal.FreeHGlobal(_openParamsJsonArray);
-            Marshal.FreeHGlobal(pluginState);
-{{ if has_field_extraction_capability }}
-            try
-            {
-                if (typeof(IDisposable).IsAssignableFrom(_requestPool.Pool.GetType()))
-                {
-                    ((IDisposable)_requestPool.Pool).Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.ToString());
+                _openParamsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
             }
 {{ end }}
-{{ if has_event_sourcing_capability }}
-            try
+
+{{ if has_field_extraction_capability }}
+            var fieldExtractor = (IFieldExtractor) _plugin;
+            var fields = fieldExtractor.Fields;
+
+            if (fields != null && fields.Count() > 0)
             {
-                foreach(var i in _instanceTable.Values)
-                {
-                    i.Dispose();
-                }
+                _numFields = fields.Count();
+                var fieldsJson = JsonSerializer.Serialize(fields);
+                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8(fieldsJson);
             }
-            catch (Exception ex)
+            else
             {
-                Console.Error.WriteLine(ex.ToString());
+                _numFields = 0;
+                _fieldsJsonArray = Marshal.StringToCoTaskMemUTF8("[]");
+            }
+
+            if (fieldExtractor.EventSourcesToExtract != null 
+                && fieldExtractor.EventSourcesToExtract.Count() > 0)
+            {
+                var eventSourcesToExtractJson = JsonSerializer.Serialize(
+                    fieldExtractor.EventSourcesToExtract);
+                _extractionSourcesJsonArray = Marshal.StringToCoTaskMemUTF8(
+                    eventSourcesToExtractJson); 
+            }
+            else
+            {
+                _extractionSourcesJsonArray = Marshal.StringToCoTaskMemUTF8("[]"); 
             }
 {{ end }}
+        }
+
+    [UnmanagedCallersOnly(EntryPoint = "plugin_get_required_api_version", CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static IntPtr GetRequiredApiVersion()
+        {
+            return _pluginRequiredApiVersion;
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_last_error", CallConvs = new[] { typeof(CallConvCdecl) })]
@@ -197,6 +149,81 @@ namespace {{namespace}}
         public static IntPtr GetPluginVersion()
         {
             return _pluginVersion;
+        }
+
+{{ if has_configuration }}
+        [UnmanagedCallersOnly(EntryPoint = "plugin_get_init_schema", CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static IntPtr GetInitSchema(IntPtr schemaType)
+        {
+            if (_pluginSchema != IntPtr.Zero)
+            {
+                Marshal.WriteInt32(schemaType, (int)PluginSchemaType.Json);
+            }
+            else
+            {
+                Marshal.WriteInt32(schemaType, (int)PluginSchemaType.None);
+            }
+
+            return _pluginSchema;
+        }
+{{ end }}
+
+        [UnmanagedCallersOnly(EntryPoint = "plugin_init", CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static PluginStateOpaquePtr Init(IntPtr configString, IntPtr returnCode)
+        {
+{{ if has_event_sourcing_capability }}
+            _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
+{{- end -}}
+{{ if has_field_extraction_capability }}
+            _requestPool = new ExtractionRequestPool(_numFields * 2);
+{{ end }}         
+            Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
+            return _pluginState;
+        }
+
+        [UnmanagedCallersOnly(EntryPoint = "plugin_destroy", CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static void Destroy(PluginStateOpaquePtr pluginState)
+        {
+            Marshal.FreeHGlobal(_pluginName);
+            Marshal.FreeHGlobal(_pluginRequiredApiVersion);
+            Marshal.FreeHGlobal(_pluginVersion);
+            Marshal.FreeHGlobal(_pluginContact);
+            Marshal.FreeHGlobal(_pluginDescription);
+            Marshal.FreeHGlobal(pluginState);
+
+{{ if has_configuration }}
+            Marshal.FreeHGlobal(_pluginSchema);
+{{ end }}
+
+{{ if has_field_extraction_capability }}
+            Marshal.FreeHGlobal(_fieldsJsonArray);
+            try
+            {
+                if (typeof(IDisposable).IsAssignableFrom(_requestPool.Pool.GetType()))
+                {
+                    ((IDisposable)_requestPool.Pool).Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.ToString());
+            }
+{{ end }}
+{{ if has_event_sourcing_capability }}
+            Marshal.FreeHGlobal(_eventSourceName);
+            Marshal.FreeHGlobal(_openParamsJsonArray);
+            try
+            {
+                foreach(var i in _instanceTable.Values)
+                {
+                    i.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.ToString());
+            }
+{{ end }}
         }
 
 {{ if has_event_sourcing_capability }}
@@ -342,14 +369,21 @@ namespace {{namespace}}
                 ctx?.Reset();
             }
         }
-
 {{ end }}
+
 {{ if has_field_extraction_capability }}
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_fields", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetFields()
         {
             return _fieldsJsonArray;
         }
+
+        [UnmanagedCallersOnly(EntryPoint = "plugin_get_extract_event_sources", CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static IntPtr GetExtractEventSources()
+        {
+            return _extractionSourcesJsonArray;
+        }
+        
         /// <remarks>
         /// When returning extracted string values via plugin_extract_fields, 
         /// every extracted string must remain valid until the next call to plugin_extract_fields
