@@ -11,7 +11,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
             Data = data;
         }
 
-        public ulong TimestampNano { get; init; } = 0;
+        public ulong TimestampNano { get; init; }
 
         public ReadOnlyMemory<byte> Data { get; init; } = ReadOnlyMemory<byte>.Empty;
 

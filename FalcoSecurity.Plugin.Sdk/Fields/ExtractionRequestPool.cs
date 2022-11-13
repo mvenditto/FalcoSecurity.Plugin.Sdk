@@ -17,21 +17,18 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
 
     public class ExtractionRequestPool
     {
-        // this SHOULD create an DisposableObjectPool
-        private readonly DefaultObjectPoolProvider _provider;
-
         private readonly ObjectPool<ExtractionRequest> _pool;
 
         public ObjectPool<ExtractionRequest> Pool => _pool;
 
         public ExtractionRequestPool(int maxRetained)
         {
-            _provider = new DefaultObjectPoolProvider
+            var provider = new DefaultObjectPoolProvider
             {
                 MaximumRetained = maxRetained
             };
 
-            _pool = _provider.Create(
+            _pool = provider.Create(
                 new ExtractionRequestPooledObjectPolicy());
         }
     }
