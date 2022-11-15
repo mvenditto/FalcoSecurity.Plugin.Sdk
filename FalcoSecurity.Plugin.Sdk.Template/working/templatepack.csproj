@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>0.4.4</PackageVersion>
+	<VersionPrefix>0.4.4</VersionPrefix>
+	<VersionSuffix></VersionSuffix>
     <PackageId>FalcoSecurity.Plugin.Sdk.Template</PackageId>
     <Title>Falco Plugin: Empty</Title>
     <Authors>mvenditto</Authors>
@@ -19,7 +20,8 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
     <NoDefaultExcludes>true</NoDefaultExcludes>
-  </PropertyGroup>
+  
+</PropertyGroup>
 
   <ItemGroup>
     <Content Include="templates\**\*" Exclude="templates\**\bin\**;templates\**\obj\**" />

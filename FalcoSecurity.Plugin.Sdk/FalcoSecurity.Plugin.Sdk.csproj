@@ -9,7 +9,8 @@
 
   <PropertyGroup>
 	<Title>The source generator for FalcoSecurity.Plugin.Sdk</Title>
-	<Version>0.1.3</Version>
+	<VersionPrefix>0.1.3</VersionPrefix>
+	<VersionSuffix></VersionSuffix>
 	<Authors>mvenditto</Authors>
 	<Company>mvenditto</Company>
 	<Description>The .NET Falco plugins SDK</Description>

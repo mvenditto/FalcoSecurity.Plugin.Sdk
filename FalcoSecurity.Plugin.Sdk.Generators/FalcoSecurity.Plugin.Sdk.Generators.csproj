@@ -11,7 +11,8 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput> <!-- Do not include the generator as a lib dependency -->
 
 		<Title>The source generator for FalcoSecurity.Plugin.Sdk</Title>
-		<Version>0.3.6</Version>
+		<VersionPrefix>0.3.6</VersionPrefix>
+		<VersionSuffix></VersionSuffix>
 		<Authors>mvenditto</Authors>
 		<Company>mvenditto</Company>
 		<Description>The source generator for FalcoSecurity.Plugin.Sdk</Description>
@@ -20,7 +21,8 @@
 		<RepositoryUrl>https://github.com/mvenditto/FalcoSecurity.Plugin.Sdk</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>falco;plugin</PackageTags>
-	</PropertyGroup>
+	
+</PropertyGroup>
 	
 	<ItemGroup>
 	  <Compile Remove="bin\**" />
