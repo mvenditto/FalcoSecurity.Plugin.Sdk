@@ -33,7 +33,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         public int Length => _size;
 
-        public void* UnderlyingArray => _eventsPtr;
+        public PluginEvent* UnderlyingArray => _eventsPtr;
 
         public void Dispose()
         {

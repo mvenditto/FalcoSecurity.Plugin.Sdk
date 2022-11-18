@@ -360,9 +360,9 @@ namespace {{namespace}}
                 ctx = evtSourceInstance.NextBatch();
 
                 Marshal.WriteInt32(numEvents, (int) ctx.BatchEventsNum);
-
-                events = (IntPtr) evtSourceInstance.EventBatch.UnderlyingArray;
-
+                PluginEvent* p = &evtSourceInstance.EventBatch.UnderlyingArray[0];
+                Marshal.WriteIntPtr(events, (IntPtr) p);
+                
                 if (ctx.IsEof)
                 {
                     return (int) PluginReturnCode.Eof;

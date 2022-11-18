@@ -14,6 +14,8 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         public uint DataLen { get; set; }
 
+        public ulong Timestamp { get; set; }
+
         unsafe public PluginEvent()
         {
             EventNum = 0;
@@ -21,8 +23,6 @@ namespace FalcoSecurity.Plugin.Sdk.Events
             DataLen = 0;
             Timestamp = ulong.MaxValue;
         }
-
-        public ulong Timestamp { get; set; }
 
         public bool Equals(PluginEvent other)
         {

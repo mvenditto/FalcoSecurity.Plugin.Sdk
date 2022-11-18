@@ -9,7 +9,7 @@
 
   <PropertyGroup>
 	<Title>The source generator for FalcoSecurity.Plugin.Sdk</Title>
-	<VersionPrefix>0.3.0</VersionPrefix>
+	<VersionPrefix>0.4.1</VersionPrefix>
 	<VersionSuffix></VersionSuffix>
 	<Authors>mvenditto</Authors>
 	<Company>mvenditto</Company>

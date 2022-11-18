@@ -26,7 +26,10 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
         public void Extract(IExtractionRequest extraction, IEventReader evt)
         {
-            throw new NotImplementedException();
+            if (extraction.FieldName == "test.int")
+            {
+                extraction.SetValue((ulong) BitConverter.ToInt32(evt.Data));
+            }
         }
     }
 }

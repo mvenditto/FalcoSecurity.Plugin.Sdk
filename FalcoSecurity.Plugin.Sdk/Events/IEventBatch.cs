@@ -6,6 +6,6 @@
 
         int Length { get; }
 
-        unsafe void* UnderlyingArray { get; }
+        unsafe PluginEvent* UnderlyingArray { get; }
     }
 }

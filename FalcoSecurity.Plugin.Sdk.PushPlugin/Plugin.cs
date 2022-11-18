@@ -37,9 +37,12 @@ namespace FalcoSecurity.Plugin.Sdk.PushPlugin
 
                     Counter++;
 
-                    Console.WriteLine($"Counter incremented c={Counter} delay={delay}");
+                    Console.WriteLine($"Counter -> {Counter}");
 
                     var timestamp = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds() * 1000000000;
+
+                    Console.WriteLine($"Set timestamp: {timestamp}");
+
                     var data = BitConverter.GetBytes(Counter);
 
                     await EventsChannel.WriteAsync(new(timestamp, data), _cts.Token);

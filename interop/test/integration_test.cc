@@ -138,6 +138,9 @@ const char* PLUGIN_EVT_SOURCE_ONLY =
 const char* PLUGIN_FIELD_EXTRACTION_ONLY =
     "../../test-plugins/PluginFieldExtractionOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
 
+const int TEST_BATCH_SIZE = 10;
+const uint64_t TEST_TIMESTAMP_VALUE = 18446744073709551615;
+
 plugin_handle_t* _plugin_handle;
 plugin_api _plugin;
 void* _plugin_state;
@@ -265,6 +268,36 @@ TEST_F(PluginEventSourceOnlyTest, PluginGetEventSource2)
     ASSERT_STREQ(_plugin.get_event_source(), "test_eventsource");
 }
 
+TEST_F(PluginEventSourceOnlyTest, PluginGetNextBatch)
+{
+    ss_plugin_rc ret = SS_PLUGIN_SUCCESS;
+    const char* openParams = "";
+    void* instance = _plugin.open(_plugin_state, openParams, &ret);
+
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+
+    uint32_t numEvents = 0;
+    ss_plugin_event* m_input_plugin_batch_evts = NULL;
+
+    ret = _plugin.next_batch(
+        _plugin_state, 
+        instance, 
+        &numEvents, 
+        &m_input_plugin_batch_evts);
+ 
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+    ASSERT_EQ(TEST_BATCH_SIZE, numEvents);
+
+    ss_plugin_event* plugin_evt;
+    for (int i = 0; i < TEST_BATCH_SIZE; i++)
+    {
+        plugin_evt = &(m_input_plugin_batch_evts[i]);
+        // printf("%d[0x%X] %lu\n", i, plugin_evt, plugin_evt->ts);
+        ASSERT_EQ(TEST_TIMESTAMP_VALUE, plugin_evt->ts);
+        ASSERT_EQ(i, (int)*plugin_evt->data);
+    }
+}
+
 TEST_F(PluginEventSourceOnlyTest, PluginHasEventSourcingCapOnly)
 {
     auto caps = (uint32_t)plugin_get_capabilities(_plugin_handle);
@@ -287,6 +320,39 @@ TEST_F(PluginFieldExtractionOnlyTest, PluginGetExtractionSources)
 {
     const char* sourcesJson = "[\"some_evt_source_1\",\"some_evt_source_2\"]";
     ASSERT_STREQ(_plugin.get_extract_event_sources(), sourcesJson);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldSingleUint64)
+{
+    ss_plugin_event* evt = (ss_plugin_event*) malloc(sizeof(ss_plugin_event));
+    uint64_t value = 42;
+    evt->evtnum = 1;
+    evt->ts = 0;
+    evt->data = (const uint8_t*)malloc(sizeof(uint64_t));
+    evt->datalen = sizeof(uint64_t);
+    memcpy((void*) evt->data, &value, sizeof(uint64_t));
+
+    auto extractReq = (ss_plugin_extract_field*)malloc(sizeof(ss_plugin_extract_field));
+    const char* field_name = "test.int";
+    extractReq->field = field_name;
+    extractReq->field_id = 0;
+    extractReq->flist = 0;
+    extractReq->ftype = FTYPE_UINT64;
+
+    ss_plugin_rc ret = _plugin.extract_fields(
+        _plugin_state,
+        evt,
+        1,
+        extractReq);
+
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+    ASSERT_STREQ(field_name, extractReq->field);
+    ASSERT_EQ(1, extractReq->res_len);
+    ASSERT_EQ(value, *extractReq->res.u64);
+
+    free((void*) evt->data);
+    free(evt);
+    free(extractReq);
 }
 
 int main(int argc, char** argv) {
