@@ -1,19 +1,26 @@
 using FalcoSecurity.Plugin.Sdk.Fields;
 using System.Runtime.InteropServices;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FalcoSecurity.Plugin.Sdk.Test
 {
     public class ExtractFieldTest
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ExtractFieldTest(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
+        
         [Fact]
         unsafe public void ExtractionRequestSetU64ArrayValue()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
-
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*) fieldPtr;
 
@@ -24,7 +31,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 var results = Enumerable
                     .Range(0, 512)
@@ -49,21 +56,18 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ExtractionRequestSetU64Value()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -74,7 +78,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 er.SetValue(42u);
 
@@ -84,21 +88,18 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ExtractionRequestSetStringValue()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -109,7 +110,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 er.SetValue("TEST");
 
@@ -123,23 +124,21 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ExtractionRequestSetStringArrayValue()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
+
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
-                var f = (PluginExtractField*) fieldPtr;
+                var f = (PluginExtractField*)fieldPtr;
 
                 f->FieldList = 1;
                 f->ArgPresent = 0;
@@ -148,10 +147,10 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 var results = Enumerable
-                    .Range(0, 512)
+                    .Range(0, 3)
                     .Select(i => $"This is String {i}!")
                     .ToArray()!;
 
@@ -161,27 +160,25 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 for (var i = 0; i < results.Length; i++)
                 {
-                    string s = Marshal.PtrToStringUTF8(rawResults[i])!;
+                    var r = rawResults[i];
+                    string s = Marshal.PtrToStringUTF8(r)!;
                     Assert.Equal($"This is String {i}!", s);
                 }
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ShouldThrowArgumentExceptionIfWritingU64ToStringTypeField()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -192,28 +189,25 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 Assert.Throws<ArgumentException>(
                     () => er.SetValue(42u));
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ShouldThrowArgumentExceptionIfWritingStringToU64TypeField()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -224,28 +218,25 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 Assert.Throws<ArgumentException>(
                     () => er.SetValue(string.Empty));
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ShouldThrowArgumentExceptionIfWritingListToNonListField()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -256,28 +247,25 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 using var er = new ExtractionRequest();
 
-                er.SetPtr(fieldPtr);
+                er.SetPtr(f);
 
                 Assert.Throws<ArgumentException>(
                     () => er.SetValue(new ulong[] { 1, 2, 3, 4 }));
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
 
         [Fact]
         unsafe public void ExtractionRequestPoolReturnMustNotFreeResourcesTest()
         {
-            var fieldPtr = IntPtr.Zero;
+            void* fieldPtr = null;
             try
             {
 
-                fieldPtr = Marshal.AllocHGlobal(sizeof(PluginExtractField));
+                fieldPtr = NativeMemory.Alloc((nuint)sizeof(PluginExtractField));
 
                 var f = (PluginExtractField*)fieldPtr;
 
@@ -294,7 +282,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
                 Assert.Equal(IntPtr.Zero, (IntPtr)r1.UnderlyingPtr);
 
-                r1.SetPtr(fieldPtr);
+                r1.SetPtr(f);
 
                 Assert.NotEqual(IntPtr.Zero, (IntPtr)r1.UnderlyingPtr);
 
@@ -308,10 +296,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                if (fieldPtr != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(fieldPtr);
-                }
+                NativeMemory.Free(fieldPtr);
             }
         }
     }

@@ -11,6 +11,7 @@
 #include <plugin_api.h>
 #include <gtest/gtest.h>
 
+
 #define SYM_RESOLVE(h, s) \
     *(void **)(&(h->api.s)) = getsym(h->handle, "plugin_"#s)
 
@@ -128,40 +129,76 @@ plugin_caps_t plugin_get_capabilities(const plugin_handle_t* h)
     return caps;
 }
 
+const char* PLUGIN_ALL_CAPS = 
+    "../../test-plugins/PluginAll/bin/Release/net6.0/linux-x64/plugin_native.so";
+
+const char* PLUGIN_EVT_SOURCE_ONLY =
+    "../../test-plugins/PluginEventSourceOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
+
+const char* PLUGIN_FIELD_EXTRACTION_ONLY =
+    "../../test-plugins/PluginFieldExtractionOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
+
+plugin_handle_t* _plugin_handle;
+plugin_api _plugin;
+void* _plugin_state;
+
+void SetUpPlugin(const char* pluginPath) {
+    _plugin_handle = plugin_load(pluginPath);
+    _plugin = _plugin_handle->api;
+    ss_plugin_rc ret = (ss_plugin_rc)0;
+    _plugin_state = _plugin.init(NULL, &ret);
+    // printf("SetUp: handle: 0x%X state: 0x%X\n", _plugin_handle, _plugin_state);
+}
+
+void TearDownPlugin()
+{
+    // printf("TearDown: handle: 0x%X state: 0x%X\n", _plugin_handle, _plugin_state);
+    _plugin.destroy(_plugin_state);
+    plugin_unload(_plugin_handle);
+    _plugin_state = nullptr;
+    _plugin_handle = nullptr;
+}
+
 class PluginBaseTest : public testing::Test
 {
-	protected:
-		plugin_handle_t* _plugin_handle;
-		plugin_api _plugin;
-        virtual const char* getPluginPath() {
-            return "../../test-plugins/PluginAll/bin/Release/net6.0/linux-x64/plugin_native.so";
-        };
-	public:
-		void SetUp() override 
+    public:    
+        static void SetUpTestSuite()
+        {
+            SetUpPlugin(PLUGIN_ALL_CAPS);
+        }
+
+        static void TearDownTestSuite()
 		{
-			_plugin_handle = plugin_load(getPluginPath());
-			_plugin = _plugin_handle->api;
-		}
-		
-		void TearDown() override
-		{
-			//_plugin.destroy(nullptr);
-			plugin_unload(_plugin_handle);
+            TearDownPlugin();
 		}
 };
 
-class PluginEventSourceOnlyTest : public PluginBaseTest
+class PluginEventSourceOnlyTest : public testing::Test
 {
-    virtual const char* getPluginPath() override {
-        return "../../test-plugins/PluginEventSourceOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
-    };
+    public:    
+        static void SetUpTestSuite()
+        {
+            SetUpPlugin(PLUGIN_EVT_SOURCE_ONLY);
+        }
+
+        static void TearDownTestSuite()
+		{
+            TearDownPlugin();
+		}
 };
 
-class PluginFieldExtractionOnlyTest : public PluginBaseTest
+class PluginFieldExtractionOnlyTest : public testing::Test
 {
-    virtual const char* getPluginPath() override {
-        return "../../test-plugins/PluginFieldExtractionOnly/bin/Release/net6.0/linux-x64/plugin_native.so";
-    };
+    public:
+        static void SetUpTestSuite()
+        {
+            SetUpPlugin(PLUGIN_FIELD_EXTRACTION_ONLY);
+        }
+
+        static void TearDownTestSuite()
+        {
+            TearDownPlugin();
+        }
 };
 
 #define ASSERT_SYM(a, s) \

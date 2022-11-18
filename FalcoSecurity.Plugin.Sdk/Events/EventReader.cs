@@ -14,7 +14,7 @@
         public ulong Timestamp => _pluginEvent->Timestamp;
 
         public ReadOnlySpan<byte> Data => new(
-            (void*) _pluginEvent->Data, 
+             _pluginEvent->Data, 
             (int) _pluginEvent->DataLen);
     }
 }

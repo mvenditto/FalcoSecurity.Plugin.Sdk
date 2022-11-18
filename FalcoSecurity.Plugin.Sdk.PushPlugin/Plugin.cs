@@ -51,7 +51,7 @@ namespace FalcoSecurity.Plugin.Sdk.PushPlugin
     [FalcoPlugin(
     Id = 999,
         Name = "dummy_plugin",
-        Description = "An example 'push mode' plugin",
+        Description = "An example 'push' mode plugin",
         Contacts = "mvenditto",
         RequiredApiVersion = "2.0.0",
         Version = "1.0.0")]

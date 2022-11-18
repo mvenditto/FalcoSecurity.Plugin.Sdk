@@ -17,9 +17,9 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         public IEnumerable<OpenParam> OpenParameters
             => Enumerable.Empty<OpenParam>();
 
-        public IEnumerable<ExtractionField> Fields
-            => Enumerable.Empty<ExtractionField>();
-
+        public IEnumerable<ExtractionField> Fields => new List<ExtractionField> { 
+            new("uint64", "dummy", "dummy field")
+        };
 
         public IEnumerable<string> EventSourcesToExtract
             => Enumerable.Empty<string>();

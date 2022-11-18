@@ -8,7 +8,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         private readonly int _dataSize;
 
-        private readonly IntPtr _eventsPtr;
+        private readonly PluginEvent* _eventsPtr;
 
         private bool _disposed = false;
 
@@ -18,27 +18,36 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
             _dataSize = dataSize;
 
-            _eventsPtr = Marshal.AllocHGlobal(sizeof(PluginEvent) * size);
+            _eventsPtr = (PluginEvent*)NativeMemory.Alloc(
+                elementCount: (nuint)_size,
+                elementSize: (nuint)sizeof(PluginEvent)
+            );
+
+            for (var i = 0; i < _size; i++)
+            {
+                var evt = &_eventsPtr[i];
+                evt->DataLen = 0;
+                evt->Data = null;
+            }
         }
 
         public int Length => _size;
 
-        public IntPtr UnderlyingArray => _eventsPtr;
+        public void* UnderlyingArray => _eventsPtr;
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
-
             for (var i = 0; i < _size; i++)
             {
-                Marshal.FreeHGlobal(((PluginEvent*)_eventsPtr)[i].Data);
+                NativeMemory.Free(_eventsPtr[i].Data);
             }
 
-            Marshal.FreeHGlobal(_eventsPtr);
-
+            NativeMemory.Free(_eventsPtr);
+            
             _size = 0;
-
             _disposed = true;
+
+            GC.SuppressFinalize(this);
         }
 
         public IEventWriter Get(int eventIndex)
@@ -53,9 +62,9 @@ namespace FalcoSecurity.Plugin.Sdk.Events
                 throw new IndexOutOfRangeException($"{eventIndex} is greater or equal than {_size}");
             }
 
-            var evt = &((PluginEvent*)_eventsPtr)[eventIndex];
-
-            return new EventWriter(evt, (uint) _dataSize);
+            return new EventWriter(
+                &_eventsPtr[eventIndex], 
+                (uint) _dataSize);
         }
     }
 }

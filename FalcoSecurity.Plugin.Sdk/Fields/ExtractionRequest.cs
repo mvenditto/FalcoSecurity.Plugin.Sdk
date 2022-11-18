@@ -10,9 +10,11 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
 
         private string? _argKey;
 
-        private IntPtr _resBuf;
+        private FieldResult* _resBuf;
 
         private int _resBufLen = MinResultBufferLen;
+
+        private int _resultsNum;
 
         private const int MinResultBufferLen = 512;
 
@@ -51,10 +53,6 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
             }
         }
 
-        public void SetPtr(IntPtr ptr)
-        {
-            SetPtr((PluginExtractField*)ptr);
-        }
         public void SetPtr(PluginExtractField* ptr)
         {
             if (_dirty)
@@ -63,7 +61,11 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
             }
 
             _extractFieldPtr = ptr;
-            _resBuf = Marshal.AllocHGlobal(sizeof(FieldResult) * MinResultBufferLen);
+            _resBuf = (FieldResult*) NativeMemory.Alloc(
+                elementCount: MinResultBufferLen,
+                elementSize: (nuint)sizeof(FieldResult)
+            );
+            _resultsNum = 0;
             _fieldName = null;
             _argKey = null;
             _dirty = true;
@@ -80,9 +82,9 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
                     $"field type is not String but {fieldType} (islist={isList})");
             }
 
-            _resBufLen = 1;
+            _resultsNum = 1;
             ((nint*)_resBuf)[0] = Marshal.StringToCoTaskMemUTF8(str);
-            _extractFieldPtr->Result = (FieldResult*)_resBuf;
+            _extractFieldPtr->Result = _resBuf;
             _extractFieldPtr->ResultLen = 1;
         }
 
@@ -99,9 +101,22 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
 
             if (strBuff.Length > _resBufLen)
             {
-                Marshal.FreeHGlobal(_resBuf);
+                if (IsList && FieldType == PluginFieldType.FTtypeString && _resultsNum > 0)
+                {
+                    for (var i = 0; i < _resultsNum; i++)
+                    {
+                        Marshal.FreeCoTaskMem(_resBuf[i].String);
+                    }
+                }
+
+                NativeMemory.Free(_resBuf);
+                
                 _resBufLen = strBuff.Length;
-                _resBuf = Marshal.AllocHGlobal(sizeof(FieldResult) * _resBufLen);
+                _resultsNum = _resBufLen;
+                _resBuf = (FieldResult*)NativeMemory.Alloc(
+                    elementCount: (nuint)_resBufLen,
+                    elementSize: (nuint)sizeof(FieldResult)
+                );
             }
 
             var strPtrBuff = (IntPtr*)_resBuf;
@@ -111,8 +126,9 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
                 strPtrBuff[i] = Marshal.StringToCoTaskMemUTF8(strBuff[i]);
             }
 
-            _extractFieldPtr->Result = (FieldResult*) _resBuf;
-            _extractFieldPtr->ResultLen = (uint) strBuff.Length;
+            _resultsNum = strBuff.Length;
+            _extractFieldPtr->Result = _resBuf;
+            _extractFieldPtr->ResultLen = (uint)_resultsNum;
         }
 
         public void SetValue(ulong u64)
@@ -125,9 +141,10 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
                 throw new ArgumentException(
                     $"field type is not UInt64 but {fieldType} (islist={isList})");
             }
-            _resBufLen = 1;
+
+            _resultsNum = 1;
             ((ulong*)_resBuf)[0] = u64;
-            _extractFieldPtr->Result = (FieldResult*)_resBuf;
+            _extractFieldPtr->Result = _resBuf;
             _extractFieldPtr->ResultLen = 1;
         }
 
@@ -144,38 +161,47 @@ namespace FalcoSecurity.Plugin.Sdk.Fields
 
             if (u64Buff.Length > _resBufLen)
             {
-                Marshal.FreeHGlobal(_resBuf);
+                if (IsList && FieldType == PluginFieldType.FTtypeString && _resBufLen > 0)
+                {
+                    for (var i = 0; i < _resBufLen; i++)
+                    {
+                        Marshal.FreeCoTaskMem(_resBuf[i].String);
+                    }
+                }
+
+                NativeMemory.Free(_resBuf);
+
                 _resBufLen = u64Buff.Length;
-                _resBuf = Marshal.AllocHGlobal(sizeof(FieldResult) * _resBufLen);
+                _resultsNum = _resBufLen;
+                _resBuf = (FieldResult*)NativeMemory.Alloc(
+                    elementCount: (nuint)_resBufLen,
+                    elementSize: (nuint)sizeof(FieldResult)
+                );
             }
 
-            var resBufSpan = new Span<ulong>((void*)_resBuf, _resBufLen);
+            _resultsNum = u64Buff.Length;
+            var resBufSpan = new Span<ulong>(_resBuf, _resBufLen);
             u64Buff.CopyTo(resBufSpan);
-            _extractFieldPtr->Result =  (FieldResult*) _resBuf;
+            _extractFieldPtr->Result = _resBuf;
             _extractFieldPtr->ResultLen = (uint) u64Buff.Length;
         }
 
         public void Free()
         {
-            if ((IntPtr)_extractFieldPtr != IntPtr.Zero)
+            if (IsList && FieldType == PluginFieldType.FTtypeString && _resultsNum > 0)
             {
-                if (IsList && FieldType == PluginFieldType.FTtypeString && _resBufLen > 0)
+                for (var i = 0; i < _resultsNum; i++)
                 {
-                    var strs = (IntPtr*)_resBuf;
-
-                    for (var i = 0; i < _resBufLen; i++)
-                    {
-                        Marshal.FreeHGlobal(strs[i]);
-                    }
+                    Marshal.FreeCoTaskMem(_resBuf[i].String);
                 }
             }
-            
-            _extractFieldPtr = (PluginExtractField*) IntPtr.Zero;
+
+            NativeMemory.Free(_resBuf);
+
+            _extractFieldPtr = null;
             _fieldName = null;
             _argKey = null;
             _resBufLen = 0;
-            Marshal.FreeHGlobal(_resBuf);
-
             _dirty = false;
         }
 

@@ -15,7 +15,7 @@ namespace FalcoSecurity.Plugin.Sdk.Events
             _dataSize = dataSize;
             _event = pluginEvent;
             _event->Timestamp = ulong.MaxValue;
-            _event->Data = Marshal.AllocHGlobal((int) dataSize);
+            _event->Data = NativeMemory.Alloc(dataSize);
             _event->DataLen = 0;
         }
 
@@ -26,9 +26,9 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         public void Write(ReadOnlySpan<byte> bytes)
         {
-            var offset = (void*)(_event->Data + (int)_event->DataLen);
+            var offset = (nuint)_event->Data + _event->DataLen;
 
-            var span = new Span<byte>(offset, bytes.Length);
+            var span = new Span<byte>((void*) offset, bytes.Length);
 
             bytes.CopyTo(span);
 
@@ -37,8 +37,8 @@ namespace FalcoSecurity.Plugin.Sdk.Events
 
         public void Free()
         {
-            Marshal.FreeHGlobal(_event->Data);
-            _event->Data = IntPtr.Zero;
+            NativeMemory.Free(_event->Data);
+            _event->Data = null;
             _event->DataLen = 0;
         }
 

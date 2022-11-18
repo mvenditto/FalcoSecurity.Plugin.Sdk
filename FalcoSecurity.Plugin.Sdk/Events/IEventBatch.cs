@@ -6,6 +6,6 @@
 
         int Length { get; }
 
-        IntPtr UnderlyingArray { get; }
+        unsafe void* UnderlyingArray { get; }
     }
 }

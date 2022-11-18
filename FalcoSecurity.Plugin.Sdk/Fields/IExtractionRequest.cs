@@ -2,7 +2,7 @@
 {
     public interface IExtractionRequest : IDisposable
     {
-        void SetPtr(IntPtr ptr);
+        unsafe void SetPtr(PluginExtractField* ptr);
 
         ulong FieldId { get; }
 

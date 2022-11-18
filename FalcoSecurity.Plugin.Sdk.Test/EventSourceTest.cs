@@ -23,7 +23,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         [Fact]
         public void TestEventPoolSize()
         {
-            /*using*/ var eventPool = new EventBatch(size: 1, dataSize: 1);
+            using var eventPool = new EventBatch(size: 1, dataSize: 1);
 
             Assert.Equal(1, eventPool.Length);
         }
@@ -60,7 +60,6 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
         }
 
-        /*
         [Fact]
         public void GetOnDisposedEventBatchThrows()
         {
@@ -70,13 +69,12 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             {
                 _ = batch.Get(0);
             });
-        }       
-        */
+        }
 
         [Fact]
         public void GetOutOfRangeOnEventBatchThrows()
         {
-            /*using*/ var batch = new EventBatch(1, 1);
+            using var batch = new EventBatch(1, 1);
             Assert.Throws<IndexOutOfRangeException>(() =>
             {
                 _ = batch.Get(2);
@@ -86,42 +84,42 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         [Fact]
         unsafe public void EventWriterNew()
         {
-            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var evt = (PluginEvent*) NativeMemory.Alloc((nuint) sizeof(PluginEvent));
             var ew = new EventWriter(evt, 1);
             try
             {
                 Assert.Equal((nint) evt, (nint) ew.UnderlyingEvent);
                 ew.Free();
                 Assert.Equal(0u, evt->DataLen);
-                Assert.Equal(IntPtr.Zero, evt->Data);
+                Assert.Equal(0u, (nuint) evt->Data);
             }
             finally
             {
-                Marshal.FreeHGlobal((IntPtr)evt);
+                NativeMemory.Free(evt);
             }
         }
 
         [Fact]
         unsafe public void EventWriterFree()
         {
-            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var evt = (PluginEvent*)NativeMemory.Alloc((nuint)sizeof(PluginEvent));
             var ew = new EventWriter(evt, 1);
             try
             {
                 ew.Free();
                 Assert.Equal(0u, evt->DataLen);
-                Assert.Equal(IntPtr.Zero, evt->Data);
+                Assert.Equal(0u, (nuint)evt->Data);
             }
             finally
             {
-                Marshal.FreeHGlobal((IntPtr) evt);
+                NativeMemory.Free(evt);
             }
         }
 
         [Fact]
         unsafe public void ReadWriteArbitraryData()
         {
-            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var evt = (PluginEvent*)NativeMemory.Alloc((nuint)sizeof(PluginEvent));
 
             try
             {
@@ -148,20 +146,20 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                Marshal.FreeHGlobal((IntPtr) evt);
+                NativeMemory.Free(evt);
             }
         }
 
         [Fact]
         unsafe public void EventReaderTest()
         {
-            var evt = (PluginEvent*)Marshal.AllocHGlobal(sizeof(PluginEvent));
+            var evt = (PluginEvent*)NativeMemory.Alloc((nuint)sizeof(PluginEvent));
 
             const string data = "This is a test!";
             var dataBytes = Encoding.UTF8.GetBytes(data);
             var nanos = DateTimeOffset.Now.ToUnixTimeMilliseconds() * 1000000;
-            var dataBuff = Marshal.AllocHGlobal(dataBytes.Length);
-            dataBytes.CopyTo(new Span<byte>((void*) dataBuff, dataBytes.Length));
+            var dataBuff = NativeMemory.Alloc((nuint) dataBytes.Length);
+            dataBytes.CopyTo(new Span<byte>(dataBuff, dataBytes.Length));
 
             try
             {
@@ -178,8 +176,8 @@ namespace FalcoSecurity.Plugin.Sdk.Test
             }
             finally
             {
-                Marshal.FreeHGlobal(evt->Data);
-                Marshal.FreeHGlobal((IntPtr)evt);
+                NativeMemory.Free(evt->Data);
+                NativeMemory.Free(evt);
             }
         }
 
@@ -298,7 +296,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         [Fact]
         public void PullEventSourceShouldTimeout()
         {
-            /*using*/ var instance = new TestPullEventSource(
+            using var instance = new TestPullEventSource(
                     EventSourceConsts.DefaultBatchSize,
                     EventSourceConsts.DefaultEventSize);
 
@@ -319,7 +317,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         [Fact]
         public void PullEvenSourceShouldPropagateError()
         {
-            /*using*/ var instance = new TestPullEventSource(
+            using var instance = new TestPullEventSource(
                     EventSourceConsts.DefaultBatchSize,
                     EventSourceConsts.DefaultEventSize);
 
@@ -336,7 +334,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
         [Fact]
         public void PullEventSourceInstanceTest()
         {
-            /*using*/ var instance = new TestPullEventSource(
+            using var instance = new TestPullEventSource(
                     EventSourceConsts.DefaultBatchSize,
                     EventSourceConsts.DefaultEventSize);
 
