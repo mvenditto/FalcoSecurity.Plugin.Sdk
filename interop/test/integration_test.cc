@@ -312,7 +312,7 @@ TEST_F(PluginFieldExtractionOnlyTest, PluginHasEventSourcingCapOnly)
 
 TEST_F(PluginFieldExtractionOnlyTest, PluginGetFields)
 {
-    const char* fieldsJson = "[{\"name\":\"test.int\",\"type\":\"uint64\",\"display\":\"\\u003Cint\\u003E\",\"desc\":\"an int field\"},{\"name\":\"test.str\",\"type\":\"string\",\"display\":\"\\u003Cstr\\u003E\",\"desc\":\"a str field\"}]";
+    const char* fieldsJson = "[{\"name\":\"test.u64\",\"type\":\"uint64\",\"isList\":false,\"display\":\"\\u003Cu64\\u003E\",\"desc\":\"an integer field\"},{\"name\":\"test.str\",\"type\":\"string\",\"isList\":false,\"display\":\"\\u003Cstr\\u003E\",\"desc\":\"a string field\"},{\"name\":\"test.[u64]\",\"type\":\"uint64\",\"isList\":true,\"display\":\"\\u003Cu64[]\\u003E\",\"desc\":\"an integer[] field\"},{\"name\":\"test.[str]\",\"type\":\"string\",\"isList\":true,\"display\":\"\\u003Cstr[]\\u003E\",\"desc\":\"a string[] field\"}]";
     ASSERT_STREQ(_plugin.get_fields(), fieldsJson);
 }
 
@@ -333,7 +333,7 @@ TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldSingleUint64)
     memcpy((void*) evt->data, &value, sizeof(uint64_t));
 
     auto extractReq = (ss_plugin_extract_field*)malloc(sizeof(ss_plugin_extract_field));
-    const char* field_name = "test.int";
+    const char* field_name = "test.u64";
     extractReq->field = field_name;
     extractReq->field_id = 0;
     extractReq->flist = 0;
@@ -351,6 +351,120 @@ TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldSingleUint64)
     ASSERT_EQ(value, *extractReq->res.u64);
 
     free((void*) evt->data);
+    free(evt);
+    free(extractReq);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldUint64Array)
+{
+    ss_plugin_event* evt = (ss_plugin_event*)malloc(sizeof(ss_plugin_event));
+    uint64_t value = 10;
+    evt->evtnum = 1;
+    evt->ts = 0;
+    evt->data = (const uint8_t*)malloc(sizeof(uint64_t));
+    evt->datalen = sizeof(uint64_t);
+    memcpy((void*)evt->data, &value, sizeof(uint64_t));
+
+    auto extractReq = (ss_plugin_extract_field*)malloc(sizeof(ss_plugin_extract_field));
+    const char* field_name = "test.[u64]";
+    extractReq->field = field_name;
+    extractReq->field_id = 0;
+    extractReq->flist = 1;
+    extractReq->ftype = FTYPE_UINT64;
+
+    ss_plugin_rc ret = _plugin.extract_fields(
+        _plugin_state,
+        evt,
+        1,
+        extractReq);
+
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+    ASSERT_STREQ(field_name, extractReq->field);
+    ASSERT_EQ(value, extractReq->res_len);
+
+    for (int i = 0; i < value; i++)
+    {
+        uint64_t elem = extractReq->res.u64[i];
+        ASSERT_EQ(i, elem);
+    }
+
+    free((void*)evt->data);
+    free(evt);
+    free(extractReq);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldSinglesString)
+{
+    ss_plugin_event* evt = (ss_plugin_event*)malloc(sizeof(ss_plugin_event));
+    uint64_t value = 42;
+    const char* strvalue = "Counter = 42";
+    evt->evtnum = 1;
+    evt->ts = 0;
+    evt->data = (const uint8_t*)malloc(sizeof(uint64_t));
+    evt->datalen = sizeof(uint64_t);
+    memcpy((void*)evt->data, &value, sizeof(uint64_t));
+
+    auto extractReq = (ss_plugin_extract_field*)malloc(sizeof(ss_plugin_extract_field));
+    const char* field_name = "test.str";
+    extractReq->field = field_name;
+    extractReq->field_id = 0;
+    extractReq->flist = 0;
+    extractReq->ftype = FTYPE_STRING;
+
+    ss_plugin_rc ret = _plugin.extract_fields(
+        _plugin_state,
+        evt,
+        1,
+        extractReq);
+
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+    ASSERT_STREQ(field_name, extractReq->field);
+    ASSERT_EQ(1, extractReq->res_len);
+    ASSERT_STREQ(strvalue, *extractReq->res.str);
+
+    free((void*)evt->data);
+    free(evt);
+    free(extractReq);
+}
+
+TEST_F(PluginFieldExtractionOnlyTest, PluginExtractFieldStringArray)
+{
+    ss_plugin_event* evt = (ss_plugin_event*)malloc(sizeof(ss_plugin_event));
+    uint64_t value = 10;
+    evt->evtnum = 1;
+    evt->ts = 0;
+    evt->data = (const uint8_t*)malloc(sizeof(uint64_t));
+    evt->datalen = sizeof(uint64_t);
+    memcpy((void*)evt->data, &value, sizeof(uint64_t));
+
+    auto extractReq = (ss_plugin_extract_field*)malloc(sizeof(ss_plugin_extract_field));
+    const char* field_name = "test.[str]";
+    extractReq->field = field_name;
+    extractReq->field_id = 0;
+    extractReq->flist = 1;
+    extractReq->ftype = FTYPE_STRING;
+
+    ss_plugin_rc ret = _plugin.extract_fields(
+        _plugin_state,
+        evt,
+        1,
+        extractReq);
+
+    ASSERT_EQ(SS_PLUGIN_SUCCESS, ret);
+    ASSERT_STREQ(field_name, extractReq->field);
+    ASSERT_EQ(value, extractReq->res_len);
+
+    std::string counter = "Counter: ";
+    std::string expected;
+
+    for (int i = 0; i < value; i++)
+    {
+        const char* elem = extractReq->res.str[i];
+        expected = counter + std::to_string(i);
+        ASSERT_STREQ(expected.c_str(), elem);
+    }
+
+    free((void*)evt->data);
     free(evt);
     free(extractReq);
 }
