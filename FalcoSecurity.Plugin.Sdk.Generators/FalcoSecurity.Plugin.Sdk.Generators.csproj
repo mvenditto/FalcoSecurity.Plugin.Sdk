@@ -11,7 +11,7 @@
 		<IncludeBuildOutput>false</IncludeBuildOutput> <!-- Do not include the generator as a lib dependency -->
 
 		<Title>The source generator for FalcoSecurity.Plugin.Sdk</Title>
-		<VersionPrefix>0.3.6</VersionPrefix>
+		<VersionPrefix>0.5.1</VersionPrefix>
 		<VersionSuffix></VersionSuffix>
 		<Authors>mvenditto</Authors>
 		<Company>mvenditto</Company>

@@ -37,9 +37,12 @@ namespace FalcoSecurity.Plugin.Sdk.PushPlugin
 
                     Counter++;
 
-                    Console.WriteLine($"Counter incremented c={Counter} delay={delay}");
+                    Console.WriteLine($"Counter -> {Counter}");
 
                     var timestamp = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds() * 1000000000;
+
+                    Console.WriteLine($"Set timestamp: {timestamp}");
+
                     var data = BitConverter.GetBytes(Counter);
 
                     await EventsChannel.WriteAsync(new(timestamp, data), _cts.Token);
@@ -51,7 +54,7 @@ namespace FalcoSecurity.Plugin.Sdk.PushPlugin
     [FalcoPlugin(
     Id = 999,
         Name = "dummy_plugin",
-        Description = "An example 'push mode' plugin",
+        Description = "An example 'push' mode plugin",
         Contacts = "mvenditto",
         RequiredApiVersion = "2.0.0",
         Version = "1.0.0")]

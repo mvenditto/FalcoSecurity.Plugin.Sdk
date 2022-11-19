@@ -3,6 +3,25 @@ using FalcoSecurity.Plugin.Sdk.Fields;
 
 namespace FalcoSecurity.Plugin.Sdk.Test
 {
+
+    internal class EventSourceIntance : PullEventSourceInstance
+    {
+        private int _counter = 0;
+
+        public EventSourceIntance() : base(10, sizeof(int))
+        {
+            TimeoutMs = 0;
+        }
+
+        protected override void PullEvent(EventSourceInstanceContext ctx, IEventWriter evt)
+        {
+            evt.SetTimestamp(ulong.MaxValue);
+            evt.Write(BitConverter.GetBytes(_counter));
+            _counter += 1;
+        }
+    }
+
+
     [FalcoPlugin(
         Id = 999,
         Name = "test_plugin",
@@ -19,7 +38,7 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
         public IEventSourceInstance Open(IEnumerable<OpenParam>? openParams)
         {
-            throw new NotImplementedException();
+            return new EventSourceIntance();
         }
 
         public void Close(IEventSourceInstance instance)

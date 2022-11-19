@@ -4,12 +4,13 @@ namespace FalcoSecurity.Plugin.Sdk
 {
     public record ExtractionField
     {
-        public ExtractionField(string type, string name, string desc, string display="")
+        public ExtractionField(string type, string name, string desc, string display="", bool isList=false)
         {
             Type = type;
             Name = name;
             Description = desc;
             Display = display;
+            IsList = isList;
         }
 
         [JsonPropertyName("name")]

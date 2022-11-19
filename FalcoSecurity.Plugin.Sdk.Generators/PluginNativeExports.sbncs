@@ -9,7 +9,6 @@ using FalcoSecurity.Plugin.Sdk.Fields;
 
 namespace {{namespace}}
 {
-    using PluginStateOpaquePtr = IntPtr;
     using EventSourceInstanceOpaquePtr = IntPtr;
 
     public static unsafe class {{class_name}}_NativeExports
@@ -41,9 +40,6 @@ namespace {{namespace}}
 
         private static uint _pluginId = 0;
         private static {{class_name}} _plugin = new();
-
-        // must be non-null, or some funcs like list_opem_params will early-exit
-        private static IntPtr _pluginState = Marshal.AllocHGlobal(1);
 
         static {{class_name}}_NativeExports()
         {
@@ -113,6 +109,18 @@ namespace {{namespace}}
 {{ end }}
         }
 
+        private static void FreeCoTaskMemAndNull(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero || ptr == null)
+            {
+                return;
+            }
+
+            Marshal.FreeCoTaskMem(ptr);
+            
+            ptr = IntPtr.Zero;
+        }
+
     [UnmanagedCallersOnly(EntryPoint = "plugin_get_required_api_version", CallConvs = new[] { typeof(CallConvCdecl) })]
         public static IntPtr GetRequiredApiVersion()
         {
@@ -120,7 +128,7 @@ namespace {{namespace}}
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_last_error", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static IntPtr GetLastError(PluginStateOpaquePtr pluginState)
+        public static IntPtr GetLastError(void* pluginState)
         {
             var lastError = _plugin.LastError ?? "cannot get error message: plugin last error not set.";
             _pluginLastError = Marshal.StringToCoTaskMemUTF8(lastError);
@@ -169,34 +177,54 @@ namespace {{namespace}}
 {{ end }}
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_init", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static PluginStateOpaquePtr Init(IntPtr configString, IntPtr returnCode)
+        public static void* Init(IntPtr configString, IntPtr returnCode)
         {
 {{ if has_event_sourcing_capability }}
             _instanceTable = new Dictionary<ulong, IEventSourceInstance>();
 {{- end -}}
 {{ if has_field_extraction_capability }}
-            _requestPool = new ExtractionRequestPool(_numFields * 2);
+            if (_numFields > 0)
+            {
+                _requestPool = new ExtractionRequestPool(_numFields * 2);
+            }
 {{ end }}         
-            Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
-            return _pluginState;
+            try
+            {
+                if (configString != IntPtr.Zero)
+                {
+                    var cfg = Marshal.PtrToStringUTF8(configString);
+                    _plugin.ConfigRaw = cfg;
+                }
+        
+                _plugin.Init();
+
+                Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Success);
+            }
+            catch (Exception ex)
+            { 
+                Console.Error.WriteLine(ex.ToString());
+                Marshal.WriteInt32(returnCode, (int)PluginReturnCode.Failure);
+            }
+            
+            return NativeMemory.Alloc(1);
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_destroy", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static void Destroy(PluginStateOpaquePtr pluginState)
+        public static void Destroy(void* pluginState)
         {
-            Marshal.FreeHGlobal(_pluginName);
-            Marshal.FreeHGlobal(_pluginRequiredApiVersion);
-            Marshal.FreeHGlobal(_pluginVersion);
-            Marshal.FreeHGlobal(_pluginContact);
-            Marshal.FreeHGlobal(_pluginDescription);
-            Marshal.FreeHGlobal(pluginState);
+            FreeCoTaskMemAndNull(_pluginName);
+            FreeCoTaskMemAndNull(_pluginRequiredApiVersion);
+            FreeCoTaskMemAndNull(_pluginVersion);
+            FreeCoTaskMemAndNull(_pluginContact);
+            FreeCoTaskMemAndNull(_pluginDescription);
+            NativeMemory.Free(pluginState);
 
 {{ if has_configuration }}
-            Marshal.FreeHGlobal(_pluginSchema);
+            FreeCoTaskMemAndNull(_pluginSchema);
 {{ end }}
 
 {{ if has_field_extraction_capability }}
-            Marshal.FreeHGlobal(_fieldsJsonArray);
+            FreeCoTaskMemAndNull(_fieldsJsonArray);
             try
             {
                 if (typeof(IDisposable).IsAssignableFrom(_requestPool.Pool.GetType()))
@@ -210,8 +238,8 @@ namespace {{namespace}}
             }
 {{ end }}
 {{ if has_event_sourcing_capability }}
-            Marshal.FreeHGlobal(_eventSourceName);
-            Marshal.FreeHGlobal(_openParamsJsonArray);
+            FreeCoTaskMemAndNull(_eventSourceName);
+            FreeCoTaskMemAndNull(_openParamsJsonArray);
             try
             {
                 foreach(var i in _instanceTable.Values)
@@ -240,7 +268,7 @@ namespace {{namespace}}
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_open", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static EventSourceInstanceOpaquePtr Open(PluginStateOpaquePtr pluginState, IntPtr paramsString, IntPtr returnCode)
+        public static EventSourceInstanceOpaquePtr Open(void* pluginState, IntPtr paramsString, IntPtr returnCode)
         {
             try
             {
@@ -274,7 +302,7 @@ namespace {{namespace}}
         }
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_close", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static void Close(PluginStateOpaquePtr pluginState, EventSourceInstanceOpaquePtr instance)
+        public static void Close(void* pluginState, EventSourceInstanceOpaquePtr instance)
         {
             var instanceId = (ulong) instance;
             try 
@@ -302,7 +330,7 @@ namespace {{namespace}}
 
         /*
         [UnmanagedCallersOnly(EntryPoint = "plugin_get_progress", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static IntPtr GetReadProgress(PluginStateOpaquePtr pluginState, EventSourceInstanceOpaquePtr instance, IntPtr progress)
+        public static IntPtr GetReadProgress(void* pluginState, EventSourceInstanceOpaquePtr instance, IntPtr progress)
         {
             Marshal.WriteInt32(progress, 0);
             return IntPtr.Zero;
@@ -310,7 +338,7 @@ namespace {{namespace}}
         */
 
         [UnmanagedCallersOnly(EntryPoint = "plugin_event_to_string", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static IntPtr EventToString(PluginStateOpaquePtr pluginState, IntPtr pluginEvent)
+        public static IntPtr EventToString(void* pluginState, IntPtr pluginEvent)
         {
             return _eventSourceName;
         }
@@ -322,7 +350,7 @@ namespace {{namespace}}
         /// </remarks>
         [UnmanagedCallersOnly(EntryPoint = "plugin_next_batch", CallConvs = new[] { typeof(CallConvCdecl) })]
 
-        public static int GetNextEventsBatch(PluginStateOpaquePtr pluginState, EventSourceInstanceOpaquePtr instance, IntPtr numEvents, IntPtr events)
+        public static int GetNextEventsBatch(void* pluginState, EventSourceInstanceOpaquePtr instance, IntPtr numEvents, IntPtr events)
         {
             EventSourceInstanceContext? ctx = null;
             try
@@ -332,11 +360,9 @@ namespace {{namespace}}
                 ctx = evtSourceInstance.NextBatch();
 
                 Marshal.WriteInt32(numEvents, (int) ctx.BatchEventsNum);
-
-                Marshal.WriteIntPtr(
-                    events, 
-                    evtSourceInstance.EventBatch.UnderlyingArray);
-
+                PluginEvent* p = &evtSourceInstance.EventBatch.UnderlyingArray[0];
+                Marshal.WriteIntPtr(events, (IntPtr) p);
+                
                 if (ctx.IsEof)
                 {
                     return (int) PluginReturnCode.Eof;
@@ -390,7 +416,7 @@ namespace {{namespace}}
         /// NOTE: freed on extractRequest.SetPtr
         /// </remarks>
         [UnmanagedCallersOnly(EntryPoint = "plugin_extract_fields", CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static int ExtractFields(PluginStateOpaquePtr pluginState, IntPtr pluginEvent, int numFields, IntPtr fieldsPtr)
+        public static int ExtractFields(void* pluginState, IntPtr pluginEvent, int numFields, IntPtr fieldsPtr)
         {
             try
             {

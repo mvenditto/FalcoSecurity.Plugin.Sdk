@@ -14,8 +14,10 @@ namespace FalcoSecurity.Plugin.Sdk.Test
     {
         public IEnumerable<ExtractionField> Fields => new List<ExtractionField>
         {
-            new(type: "uint64", name: "test.int", desc: "an int field", display: "<int>"),
-            new(type: "string", name: "test.str", desc: "a str field", display: "<str>"),
+            new(type: "uint64", name: "test.u64", desc: "an integer field", display: "<u64>"),
+            new(type: "string", name: "test.str", desc: "a string field", display: "<str>"),
+            new(type: "uint64", name: "test.[u64]", isList: true, desc: "an integer[] field", display: "<u64[]>"),
+            new(type: "string", name: "test.[str]", isList: true, desc: "a string[] field", display: "<str[]>")
         };
 
         public IEnumerable<string> EventSourcesToExtract => new List<string>
@@ -26,7 +28,36 @@ namespace FalcoSecurity.Plugin.Sdk.Test
 
         public void Extract(IExtractionRequest extraction, IEventReader evt)
         {
-            throw new NotImplementedException();
+            var counter = (ulong) BitConverter.ToInt32(evt.Data);
+
+            if (extraction.FieldName == "test.u64")
+            {
+                extraction.SetValue(counter);
+            }
+            else if (extraction.FieldName == "test.str")
+            {
+                extraction.SetValue($"Counter = {counter}");
+            }
+            else if (extraction.FieldName == "test.[u64]")
+            {
+                var elementsCount = (int) Math.Max(1, counter);
+                var elements = new ulong[elementsCount];
+                for (var i = 0; i < elementsCount; i++)
+                {
+                    elements[i] = (ulong) i;
+                }
+                extraction.SetValue(elements);
+            }
+            else if (extraction.FieldName == "test.[str]")
+            {
+                var elementsCount = (int)Math.Max(1, counter);
+                var elements = new string[elementsCount];
+                for (var i = 0; i < elementsCount; i++)
+                {
+                    elements[i] = $"Counter: {i}";
+                }
+                extraction.SetValue(elements);
+            }
         }
     }
 }
