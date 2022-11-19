@@ -1,6 +1,6 @@
 # FalcoSecurity.Plugin.Sdk
 [![Build Status](https://img.shields.io/appveyor/build/mvenditto/falcosecurity-plugin-sdk.svg?style=for-the-badge&logo=appveyor&logoColor=white)](https://ci.appveyor.com/project/mvenditto/falcosecurity-plugin-sdk)
-[![AppVeyor Tests](https://img.shields.io/appveyor/tests/mvenditto/falcosecurity-plugin-sdk?&compact_message&logo=appveyor&logoColor=white&style=for-the-badge)](https://ci.appveyor.com/project/mvenditto/falcosecurity-plugin-sdk/build/tests)
+[![AppVeyor Tests](https://img.shields.io/appveyor/tests/mvenditto/falcosecurity-plugin-sdk/master?&compact_message&logo=appveyor&logoColor=white&style=for-the-badge)](https://ci.appveyor.com/project/mvenditto/falcosecurity-plugin-sdk/build/tests)
 [![Interop Tests](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgist.githubusercontent.com%2Fmvenditto%2Ffc790dd2c674df3bc6deee04010cb59c%2Fraw%2Ff52f9744ab6d8bb4a28176332bdbf4abb725afa0%2Ffpk_interop_test_result.json&logo=appveyor&logoColor=white)](https://ci.appveyor.com/project/mvenditto/falcosecurity-plugin-sdk/build/tests)
 [![Coverage](https://img.shields.io/codecov/c/github/mvenditto/FalcoSecurity.Plugin.Sdk?style=for-the-badge&token=KNEH3735KU&logo=codecov&logoColor=white)](https://app.codecov.io/gh/mvenditto/FalcoSecurity.Plugin.Sdk) 
 ![Codacy grade](https://img.shields.io/codacy/grade/71314d20dbc64028bc80d4291272af2d?style=for-the-badge&logo=codacy) 
